@@ -17,6 +17,10 @@ var GameBoard =
 	pceNum: new Array(13),			//Indexed by piece, how many of a given piece exists?
 	posKey: 0,						//Maps a board to a key (integer, unique)
 	
+	moveList: new Array(MAXDEPTH * MAXPOSITIONMOVES),	//generated moves
+	moveScores: new Array(MAXDEPTH * MAXPOSITIONMOVES),//scores for generated moves
+	moveListStart: new Array(MAXDEPTH),   //move list starts for a give depth
+	
 	/*
 	pList stores position of each pieces
 	How can one piece have an index? Especially if there are multiple of them?
@@ -53,7 +57,7 @@ function GeneratePosKey ()
 	}
 	
 	//XORing the side
-	if (GameBoard.side == COLOR.WHITE)
+	if (GameBoard.side == COLORS.WHITE)
 	{
 		finalKey ^= SideKey;
 	}
@@ -69,6 +73,62 @@ function GeneratePosKey ()
 	
 	return finalKey;
 }
+
+function ResetBoard ()
+{
+	//Setting all 120 squares to off board
+	for (let i = 0; i < BRD_SQ_NUM; i++)
+	{
+		GameBoard.pieces[i] = SQUARES.OFFBOARD;
+	}
+	
+	//Setting middle 8x8 grid to empty pieces
+	for (let i = 0; i < 64; i++)
+	{
+		GameBoard.pieces[SQ120(i)] = PIECES.EMPTY;
+	}
+	
+	//Setting pList to empty 
+	for (let i = 0; i < GameBoard.pList.length; i++)
+	{
+		GameBoard.pList[i] = PIECES.EMPTY;
+	}
+	
+	//Material to zero
+	for (let i = 0; i < GameBoard.material.length; i++)
+	{
+		GameBoard.material[i] = 0;
+	}
+	
+	//Number of each piece to zero
+	for (let i = 0; i < GameBoard.pceNum.length; i++)
+	{
+		GameBoard.pceNum[i] = 0;
+	}
+	
+	//Members to default values
+	GameBoard.side = COLORS.BOTH;
+	GameBoard.enPas = SQUARES.NO_SQ;
+	GameBoard.fiftyMove = 0;
+	GameBoard.ply = 0;
+	GameBoard.hisPly = 0;
+	GameBoard.castlePerm = 0;
+	GameBoard.posKey = 0;
+	
+	GameBoard.moveListStart[GameBoard.ply] = 0;
+}
+
+function ParseFen (fen)
+{
+	ResetBoard();	//clear board before we put anything in
+}
+
+
+
+
+
+
+
 
 
 

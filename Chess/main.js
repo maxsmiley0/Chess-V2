@@ -2,7 +2,7 @@ $(function()
 {
 	init();
 	console.log("Main Init Called");
-	console.log(Sq120ToSq64);
+	console.log(GeneratePosKey());
 });
 
 function InitFileRanksBrd()

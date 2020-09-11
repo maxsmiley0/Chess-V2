@@ -47,6 +47,10 @@ const BOOL =
 TRUE: 1, FALSE: 0
 }
 
+const MAXGAMEMOVES = 2048;		//Tentative upper bound on game moves
+const MAXPOSITIONMOVES = 256;	//Upper bound on possible moves in a position
+const MAXDEPTH = 64;			//Upper bound on max depth of plies searched
+
 /*
 Why are we using an array of 120 (12 x 10) as opposed to an array of 64 (8 x 8)? 
 This simplifies legal move generation down the line; for example, we will know when to

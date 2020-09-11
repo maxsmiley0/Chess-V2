@@ -76,6 +76,9 @@ const PieceKeys = new Array(14 * 120);	//14 pieces times 120 squares
 var SideKey = 0;						//XOR in/out depending on the side to move
 const CastleKeys = new Array(16);		//4 castling directions = 16 combinations of privileges
 
+const Sq120ToSq64 = new Array(BRD_SQ_NUM);	//converts array 120 to array 64
+const Sq64ToSq120 = new Array(64);			//converts array 64 to array 120
+
 //Generates a random 31 bit number, essentially generates 4 numbers and shifts + concatenates
 function RAND_32()
 {
@@ -83,6 +86,20 @@ function RAND_32()
 		    Math.floor(Math.random() * 255 + 1) << 16 | 
 		    Math.floor(Math.random() * 255 + 1) << 8  |
 		    Math.floor(Math.random() * 255 + 1));
+}
+
+//Gets SQUARE-64 from SQUARE-120
+
+function SQ64 (SQ120)
+{
+	return Sq120To64[SQ120];
+}
+
+//Gets SQUARE-120 from SQUARE-64
+
+function SQ120 (SQ64)
+{
+	return Sq64ToSq120[SQ64];
 }
 
 /*

@@ -24,8 +24,27 @@ function InitFileRanksBrd()
 	}
 }
 
+//Filling all of the keys with RAND_32 numbers
+function InitHashKeys ()
+{
+	PieceKeys.forEach(i => RAND_32);
+	
+	for (let i = 0; i < PieceKeys.length; i++)
+	{
+		PieceKeys[i] = RAND_32();
+	}
+	
+	SideKey = RAND_32();
+	
+	for (let i = 0; i < CastleKeys.length; i++)
+	{
+		CastleKeys[i] = RAND_32();
+	}
+}
+
 function init()
 {
 	console.log("init() called");
-	InitFileRanksBrd();
+	InitFileRanksBrd();				//Initializing rank and file arrays
+	InitHashKeys();					//Initializing position keys
 }

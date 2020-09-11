@@ -12,8 +12,10 @@ var GameBoard =
 	hisPly: 0,						//Stack of game states / moves
 	ply: 0,							//Number of plies into the search tree	
 	castlePerm: 0,					//Can a given side castle?		
+	enPas: 0,						//En passant
 	material: new Array(2),			//Indexed by side, holds value of material
 	pceNum: new Array(13),			//Indexed by piece, how many of a given piece exists?
+	posKey: 0,						//Maps a board to a key (integer, unique)
 	
 	/*
 	pList stores position of each pieces
@@ -32,3 +34,47 @@ var GameBoard =
 	pList: new Array(14 * 10)
 	
 };
+
+//Generates a position key, using the random numbers from the arrays
+function GeneratePosKey ()
+{
+	let finalKey = 0;
+	
+	//XORing pieces, iterating through board
+	for (let sq = 0; sq < BRD_SQ_NUM; sq++)
+	{
+		let piece = GameBoard.pieces[sq];
+		//If piece is not empty or off board
+		if (piece !== PIECES.EMPTY &&  piece !== PIECES.OFFBOARD)
+		{
+			//XOR the key corresponding to a given piece on a square
+			finalKey ^= PieceKeys[(piece * 120) + sq];
+		}
+	}
+	
+	//XORing the side
+	if (GameBoard.side == COLOR.WHITE)
+	{
+		finalKey ^= SideKey;
+	}
+	
+	//XORing en passant permission
+	if (GameBoard.enPas != SQUARES.NO_SQ)
+	{
+		finalKey ^= [GameBoard.enPas];
+	}
+	
+	//XORing castling permission
+	finalKey ^= CastleKeys[GameBoard.castlePerm];
+	
+	return finalKey;
+}
+
+
+
+
+
+
+
+
+

@@ -71,6 +71,20 @@ function FR2SQ (f, r)
 	return (21 + f) + (10 * r);
 }
 
+//Keys, to be generated at the start of the program
+const PieceKeys = new Array(14 * 120);	//14 pieces times 120 squares
+var SideKey = 0;						//XOR in/out depending on the side to move
+const CastleKeys = new Array(16);		//4 castling directions = 16 combinations of privileges
+
+//Generates a random 31 bit number, essentially generates 4 numbers and shifts + concatenates
+function RAND_32()
+{
+	return (Math.floor(Math.random() * 255 + 1) << 23 | 
+		    Math.floor(Math.random() * 255 + 1) << 16 | 
+		    Math.floor(Math.random() * 255 + 1) << 8  |
+		    Math.floor(Math.random() * 255 + 1));
+}
+
 /*
 The following arrays store boolean values, corresponding to if a given piece is a "big"
 piece, major piece, minor piece, is of a given side, is of a given type, and an integer

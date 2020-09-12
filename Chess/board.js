@@ -1,7 +1,7 @@
 //Maps a given piece to its "maximum index". Takes in parameter piece name e.g. wP
 function PCEINDEX(pce)
 {
-	return (pce * 10 + GameBoard.pceNum(pce));
+	return (pce * 10 + GameBoard.pceNum[pce]);
 }
 
 var GameBoard = 
@@ -117,20 +117,10 @@ function GeneratePosKey ()
 	return finalKey;
 }
 
-function ResetBoard ()
+
+//Updates piece lists
+function UpdateListsMaterial ()
 {
-	//Setting all 120 squares to off board
-	for (let i = 0; i < BRD_SQ_NUM; i++)
-	{
-		GameBoard.pieces[i] = SQUARES.OFFBOARD;
-	}
-	
-	//Setting middle 8x8 grid to empty pieces
-	for (let i = 0; i < 64; i++)
-	{
-		GameBoard.pieces[SQ120(i)] = PIECES.EMPTY;
-	}
-	
 	//Setting pList to empty 
 	for (let i = 0; i < GameBoard.pList.length; i++)
 	{
@@ -147,6 +137,39 @@ function ResetBoard ()
 	for (let i = 0; i < GameBoard.pceNum.length; i++)
 	{
 		GameBoard.pceNum[i] = 0;
+	}
+	
+	//Loops through 64 squares
+	for (let i = 0; i < 64; i++)
+	{
+		//Map the index onto the 12 x 10 board
+		let sq = SQ120(i);
+		let piece = GameBoard.pieces[sq];	//piece at that square
+		
+		//If the square is not empty
+		if (piece != PIECES.EMPTY)
+		{
+			console.log(`piece ${piece} on square ${sq}`);
+			
+			GameBoard.material[PieceCol[piece]] += PieceVal[piece];	//update material
+			GameBoard.pList[PCEINDEX(piece)] = sq;					//add position to piece
+			GameBoard.pceNum[piece]++;								//add piece to board
+		}							
+	}
+}
+
+function ResetBoard ()
+{
+	//Setting all 120 squares to off board
+	for (let i = 0; i < BRD_SQ_NUM; i++)
+	{
+		GameBoard.pieces[i] = SQUARES.OFFBOARD;
+	}
+	
+	//Setting middle 8x8 grid to empty pieces
+	for (let i = 0; i < 64; i++)
+	{
+		GameBoard.pieces[SQ120(i)] = PIECES.EMPTY;
 	}
 	
 	//Members to default values
@@ -261,6 +284,7 @@ function ParseFen (fen)
 	}
 	
 	GameBoard.posKey = GeneratePosKey();
+	UpdateListsMaterial();
 }
 
 

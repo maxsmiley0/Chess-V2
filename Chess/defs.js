@@ -69,7 +69,7 @@ const BRD_SQ_NUM = 120;
 const FilesBrd = new Array(BRD_SQ_NUM);
 const RanksBrd = new Array(BRD_SQ_NUM);
 
-var START_FEN =  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
+var START_FEN =  "4b2B/1p1q4/4n3/1kpP4/2r3Q1/p2P4/Pb4p1/4K3 w - - 0 1";
 const PceChar = ".PNBRQKpnbrqk";
 const SideChar = "wb";
 const RankChar = "12345678";

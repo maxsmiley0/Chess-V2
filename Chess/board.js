@@ -1,7 +1,7 @@
 //Maps a given piece to its "maximum index". Takes in parameter piece name e.g. wP
-function PCEINDEX(pce)
+function PCEINDEX(pce, pceNum) 
 {
-	return (pce * 10 + GameBoard.pceNum[pce]);
+	return (pce * 10 + pceNum);
 }
 
 var GameBoard = 
@@ -117,6 +117,18 @@ function GeneratePosKey ()
 	return finalKey;
 }
 
+//Prints piece list in form "Piece P on e2"
+function PrintPieceLists ()
+{
+	//Loops for each piece type	
+	for (let piece = PIECES.wP; piece <= PIECES.bK; piece++)
+	{
+		for (let pceNum = 0; pceNum < GameBoard.pceNum[piece]; pceNum++)
+		{
+			console.log(`Piece ${PceChar[piece]} on ${PrSq(GameBoard.pList[PCEINDEX(piece, pceNum)])}`);
+		}
+	}
+}
 
 //Updates piece lists
 function UpdateListsMaterial ()
@@ -152,10 +164,12 @@ function UpdateListsMaterial ()
 			console.log(`piece ${piece} on square ${sq}`);
 			
 			GameBoard.material[PieceCol[piece]] += PieceVal[piece];	//update material
-			GameBoard.pList[PCEINDEX(piece)] = sq;					//add position to piece
+			GameBoard.pList[PCEINDEX(piece, GameBoard.pceNum[piece])] = sq; //add position to piece
 			GameBoard.pceNum[piece]++;								//add piece to board
 		}							
 	}
+	
+	PrintPieceLists();
 }
 
 function ResetBoard ()

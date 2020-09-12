@@ -168,6 +168,14 @@ const PieceSlides = [ BOOL.FALSE,
 BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE,
 BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE];
 
+//The following arrays store the directional information of how non-pawn pieces move
+//No Queen Direction because she simply uses RkDir and BiDir
+
+const KnDir = [-8, -19, -21, -12, 8, 19, 21, 12];
+const RkDir	= [-1, -10, 1, 10];
+const BiDir	= [-9, -11, 9, 11];
+const KiDir = [-1, -10, 1, 10, -9, -11, 9, 11]
+
 
 
 

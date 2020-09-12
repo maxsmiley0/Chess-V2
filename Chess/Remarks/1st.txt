@@ -14,4 +14,4 @@ I am a big fan of how BFS devotes a lot of time rigorously defining what makes a
 
 BFS subtly introduces the Zobrist hashing scheme early, in his board string representation  section, where he instructs us to fill 14 * 120 (numPieces * numSquares) worth of 31-bit memory (we use 31-bit numbers) with random numbers, and XORing them all together (along with side, castling rights, en passant) to create a unique board key. I am a bit confused, however, because this scheme could still lead to collisions, which seems like it would render the whole scheme invalid, but perhaps he simply relies on the sheer improbability of that happening?
 
-Finally, I really like BFS's use of constant object literals, it greatly improves the readability of his code.
+Finally, I really like BFS's heavy use of constant object literals, it greatly improves the readability of his code.

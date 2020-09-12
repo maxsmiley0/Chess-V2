@@ -299,9 +299,131 @@ function ParseFen (fen)
 	
 	GameBoard.posKey = GeneratePosKey();
 	UpdateListsMaterial();
+	PrintSqAttacked();
 }
 
+function PrintSqAttacked ()
+{
+	console.log ("\nAttacked\n");
+	
+	for (let rank = RANKS.RANK_8; rank >= RANKS.RANK_1; rank--)
+	{
+		//Prints rank
+		let line = `${rank + 1} `;
+		let piece;
+		//X for attacked square for a given side, otherwise '.'
+		for (let file = FILES.FILE_A; file <= FILES.FILE_H; file++)
+		{
+			if (SqAttacked(FR2SQ(file, rank), GameBoard.side))
+			{
+				piece = 'X';
+			}
+			else 
+			{
+				piece = '.';
+			}
+			line += ` ${piece} `
+		}
+		console.log(line);
+	}
+	console.log('');
+}
 
+//Returns if a square is attacked by a given side
+//Given a square, we first see if it is attacked by a pawn, then a knight, etc.
+//Seems like it would include many unnecessary calculations
+function SqAttacked (sq, side)
+{	
+	//pawn attack
+	if (side === COLORS.WHITE)
+	{
+		//diagonals move by 9 and 11 in the 12x10 board
+		if (GameBoard.pieces[sq - 11] === PIECES.wP || GameBoard.pieces[sq - 9] === PIECES.wP)
+		{
+			return BOOL.TRUE;
+		}
+	}
+	else 
+	{
+		//diagonals move by 9 and 11 in the 12x10 board
+		if (GameBoard.pieces[sq + 11] === PIECES.bP || GameBoard.pieces[sq + 9] === PIECES.bP)
+		{
+			return BOOL.TRUE;
+		}
+	}
+	
+	//Looping through various knight directions
+	for (let i = 0; i < KnDir.length; i++)
+	{
+		let piece = GameBoard.pieces[sq + KnDir[i]];
+		if (piece !== SQUARES.OFFBOARD && PieceCol[piece] === side && PieceKnight[piece] == BOOL.TRUE)
+		{
+			return BOOL.TRUE;
+		}
+	}
+	
+	//Looping through four directions of rooks
+	for (let i = 0; i < 4; i++)
+	{
+		let t_sq = sq + RkDir[i];
+		let piece = GameBoard.pieces[t_sq];
+		//loop until we go off the board
+		while (piece !== SQUARES.OFFBOARD)
+		{
+			//break out of the loop if we run into a piece
+			if (piece !== PIECES.EMPTY)
+			{
+				//Returns true if there is a rook or queen horizontally / vertically
+				//Breaks if wrong color
+				if (PieceRookQueen[piece] === BOOL.TRUE && PieceCol[piece] === side)
+				{
+					return BOOL.TRUE;
+				}
+				break;
+			}
+			
+			t_sq += RkDir[i];
+			piece = GameBoard.pieces[t_sq];
+		}
+	}
+	
+	//Looping through four directions of bishops
+	for (let i = 0; i < 4; i++)
+	{
+		let t_sq = sq + BiDir[i];
+		let piece = GameBoard.pieces[t_sq];
+		//loop until we go off the board
+		while (piece !== SQUARES.OFFBOARD)
+		{
+			//break out of the loop if we run into a piece
+			if (piece !== PIECES.EMPTY)
+			{
+				//Returns true if there is a bishop or queen diagonally
+				//Breaks if wrong color
+				if (PieceBishopQueen[piece] === BOOL.TRUE && PieceCol[piece] === side)
+				{
+					return BOOL.TRUE;
+				}
+				break;
+			}
+			
+			t_sq += BiDir[i];
+			piece = GameBoard.pieces[t_sq];
+		}
+	}
+	
+	//Looping through various king directions
+	for (let i = 0; i < KiDir.length; i++)
+	{
+		let piece = GameBoard.pieces[sq + KiDir[i]];
+		if (piece !== SQUARES.OFFBOARD && PieceCol[piece] === side && PieceKing[piece] == BOOL.TRUE)
+		{
+			return BOOL.TRUE;
+		}
+	}
+	
+	return BOOL.FALSE;
+}
 
 
 

@@ -5,6 +5,7 @@ $(function()
 	console.log(GeneratePosKey());
 	ParseFen(START_FEN);
 	PrintBoard();
+	PrintSqAttacked();
 });
 
 function InitFileRanksBrd()

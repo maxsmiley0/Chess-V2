@@ -69,6 +69,12 @@ const BRD_SQ_NUM = 120;
 const FilesBrd = new Array(BRD_SQ_NUM);
 const RanksBrd = new Array(BRD_SQ_NUM);
 
+var START_FEN =  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
+const PceChar = ".PNBRQKpnbrqk";
+const SideChar = "wb";
+const RankChar = "12345678";
+const FileChar = "abcdefgh";
+
 //Converts a file and rank to number
 function FR2SQ (f, r)
 {

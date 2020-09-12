@@ -39,6 +39,49 @@ var GameBoard =
 	
 };
 
+//Prints a board representation to console, for debugging purposes
+function PrintBoard ()
+{	
+	console.log("\nGame Board\n");
+	
+	for (let rank = RANKS.RANK_8; rank >= RANKS.RANK_1; rank--)
+	{
+		//Prints out # of Rank
+		let line = RankChar[rank] + " ";
+		//On the same line, prints out the pieces corresponding to those squares
+		for (let file = FILES.FILE_A; file <= FILES.FILE_H; file++)
+		{
+			line += (" " + PceChar[GameBoard.pieces[FR2SQ(file, rank)]] + " ");
+		}
+		console.log(line);
+	}
+	
+	console.log("");
+	
+	let line = "   ";
+	//Prints out letter of File
+	for (let file = FILES.FILE_A; file <= FILES.FILE_H; file++)
+	{
+		line += (" " + FileChar[file] + ' ');
+	}
+	
+	//Auxiliary FEN information about the side to move, en passant state, castling rights
+	//and position key
+	console.log(line);
+	console.log("side: " + SideChar[GameBoard.side]);
+	console.log("enPas: " + GameBoard.enPas);
+	
+	line = "";
+	
+	if (GameBoard.castlePerm & CASTLEBIT.WKCA) line += 'K';
+	if (GameBoard.castlePerm & CASTLEBIT.WQCA) line += 'Q';
+	if (GameBoard.castlePerm & CASTLEBIT.BKCA) line += 'k';
+	if (GameBoard.castlePerm & CASTLEBIT.BQCA) line += 'q';
+	
+	console.log("castle: " + line);
+	console.log("key: " + GameBoard.posKey.toString(16));
+}
+
 //Generates a position key, using the random numbers from the arrays
 function GeneratePosKey ()
 {
@@ -118,16 +161,107 @@ function ResetBoard ()
 	GameBoard.moveListStart[GameBoard.ply] = 0;
 }
 
+//Turns an FEN into a board!
 function ParseFen (fen)
 {
 	ResetBoard();	//clear board before we put anything in
+	
+	let rank = RANKS.RANK_8;
+	let file = FILES.FILE_A;
+	let fenCnt = 0;				//stores which character are at, in the string fen
+	let count = 0;				//stores how many squares will be updated by a single char
+	let piece = 0;				//stores which piece will be inputted
+	
+	//This weird backwards loop is a byproduct of our file / rank naming conventions
+	while ((rank >= RANKS.RANK_1) && fenCnt < fen.length)
+	{
+		count = 1;
+		
+		switch (fen[fenCnt])
+		{
+			//Case piece
+			case 'p': piece = PIECES.bP; break;
+			case 'r': piece = PIECES.bR; break;
+			case 'n': piece = PIECES.bN; break;
+			case 'b': piece = PIECES.bB; break;
+			case 'k': piece = PIECES.bK; break;
+			case 'q': piece = PIECES.bQ; break;
+			case 'P': piece = PIECES.wP; break;
+			case 'R': piece = PIECES.wR; break;
+			case 'N': piece = PIECES.wN; break;
+			case 'B': piece = PIECES.wB; break;
+			case 'K': piece = PIECES.wK; break;
+			case 'Q': piece = PIECES.wQ; break;
+			
+			//Case number (signifies blank squares)
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+				piece = PIECES.EMPTY;
+				count = parseInt(fen[fenCnt], 10);
+				break;
+			
+			//Reaching the end of a line
+			case '/':	
+			case ' ':
+				rank--;
+				file = FILES.FILE_A;
+				fenCnt++;
+				continue;
+			default:
+				console.log("FEN error");
+				return;
+		}
+		
+		//Sets "count" squares to the appropriate piece
+		for (let i = 0; i < count; i++)
+		{
+			GameBoard.pieces[FR2SQ(file, rank)] = piece;
+			file++;
+		}
+		
+		fenCnt++;
+	}
+	
+	GameBoard.side = (fen[fenCnt] === 'w') ? COLORS.WHITE : COLORS.BLACK;	//Sets turn
+	fenCnt += 2;	//advances to castling privileges
+	
+	//Loop to 4 because there could exist up to 4 characters
+	for (let i = 0; i < 4; i++, fenCnt++)
+	{
+		if (fen[fenCnt] === ' ')
+		{
+			break;
+		}
+		switch (fen[fenCnt])
+		{
+			//IOR operator??
+			case 'K': GameBoard.castlePerm |= CASTLEBIT.WKCA; break;
+			case 'Q': GameBoard.castlePerm |= CASTLEBIT.WQCA; break;
+			case 'k': GameBoard.castlePerm |= CASTLEBIT.BKCA; break;
+			case 'q': GameBoard.castlePerm |= CASTLEBIT.BQCA; break;
+			default: break;
+		}
+	}
+	
+	fenCnt++;	//Moves on to en passant square
+	
+	if (fen[fenCnt] !== '-')
+	{
+		file = fen[fenCnt].charCodeAt() - 'a'.charCodeAt();	//Number of ascii chars away from 'a'
+		rank = parseInt(fen[fenCnt + 1], 10);
+		
+		console.log(`fen[fenCnt]: ${fen[fenCnt]} File: ${file} Rank: ${rank}`);
+		GameBoard.enPas = FR2SQ(file, rank);
+	}
+	
+	GameBoard.posKey = GeneratePosKey();
 }
-
-
-
-
-
-
 
 
 

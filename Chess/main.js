@@ -3,6 +3,8 @@ $(function()
 	init();
 	console.log("Main Init Called");
 	console.log(GeneratePosKey());
+	ParseFen(START_FEN);
+	PrintBoard();
 });
 
 function InitFileRanksBrd()

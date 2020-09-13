@@ -5,6 +5,96 @@ function MOVE(from, to, captured, promoted, flag)
 	return (from | (to << 7) | (captured << 14) | (promoted << 20) | flag); 
 }
 
+function AddCaptureMove (move)
+{
+	//Adding the move to its appropriate spot in the GameBoard moveListStart array
+	//Also increasing moveListStart for the given ply, because one spot has been filled
+	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
+	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 0;
+}
+
+function AddQuietMove (move)
+{
+	//Adding the move to its appropriate spot in the GameBoard moveListStart array
+	//Also increasing moveListStart for the given ply, because one spot has been filled
+	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
+	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 0;
+}
+
+function AddEnPassantMove (move)
+{
+	//Adding the move to its appropriate spot in the GameBoard moveListStart array
+	//Also increasing moveListStart for the given ply, because one spot has been filled
+	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
+	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 0;
+}
+
+//Pawn related captures, we need a separate function to handle promotions
+
+function AddWhitePawnCaptureMove (from, to, cap)
+{
+	//Promotion clause
+	if (RanksBrd[from] === RANKS.RANK_7)
+	{
+		AddCaptureMove(MOVE(from, to, cap, PIECES.wQ, NOMOVE));
+		AddCaptureMove(MOVE(from, to, cap, PIECES.wR, NOMOVE));
+		AddCaptureMove(MOVE(from, to, cap, PIECES.wB, NOMOVE));
+		AddCaptureMove(MOVE(from, to, cap, PIECES.wN, NOMOVE));
+	}
+	//General capture clause
+	else 
+	{
+		AddCaptureMove(MOVE(from, to, cap, PIECES.EMPTY, NOMOVE));
+	}
+}
+
+function AddBlackPawnCaptureMove (from, to, cap)
+{
+	//Promotion clause	
+	if (RanksBrd[from] === RANKS.RANK_2)
+	{
+		AddCaptureMove(MOVE(from, to, cap, PIECES.bQ, NOMOVE));
+		AddCaptureMove(MOVE(from, to, cap, PIECES.bR, NOMOVE));
+		AddCaptureMove(MOVE(from, to, cap, PIECES.bB, NOMOVE));
+		AddCaptureMove(MOVE(from, to, cap, PIECES.bN, NOMOVE));
+	}
+	//General capture clause
+	else 
+	{
+		AddCaptureMove(MOVE(from, to, cap, PIECES.EMPTY, NOMOVE));
+	}
+}
+
+function AddWhitePawnQuietMove (from, to)
+{
+	if (RanksBrd[from] === RANKS.RANK_7)
+	{
+		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.wQ, NOMOVE));
+		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.wR, NOMOVE));
+		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.wB, NOMOVE));
+		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.wN, NOMOVE));
+	}
+	else 
+	{
+		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.EMPTY, NOMOVE));
+	}
+}
+
+function AddBlackPawnQuietMove (from, to)
+{
+	if (RanksBrd[from] === RANKS.RANK_2)
+	{
+		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.bQ, NOMOVE));
+		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.bR, NOMOVE));
+		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.bB, NOMOVE));
+		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.bN, NOMOVE));
+	}
+	else 
+	{
+		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.EMPTY, NOMOVE));
+	}
+}
+
 //Generates the moves, filling the GameBoard arrays of moveList and moveListStart
 function GenerateMoves()
 {
@@ -17,6 +107,7 @@ function GenerateMoves()
 	let t_sq;
 	let pceIndex;
 	let pce;
+	let dir;
 	
 	//Pawns have direction, so we have to specify the color
 	if (GameBoard.side == COLORS.WHITE)
@@ -34,22 +125,25 @@ function GenerateMoves()
 			//Moving forward one or two
 			if (GameBoard.pieces[sq + 10] === PIECES.EMPTY)
 			{
-				//add pawn move
+				//Forward 1
+				AddWhitePawnQuietMove(sq, sq + 10);
+				
+				//Forward 2
 				if (RanksBrd[sq] === RANKS.RANK_2 && GameBoard.pieces[sq + 20] === PIECES.EMPTY)
 				{
-					// Add quiet move here
+					AddQuietMove(MOVE(sq, sq + 20, PIECES.EMPTY, PIECES.EMPTY, MFLAGPS));
 				}
 			}
 			
 			//Capture cases
 			if (SQOFFBOARD(sq + 9) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 9]] === COLORS.BLACK)
 			{
-				//add pawn cap move
+				AddWhitePawnCaptureMove(sq, sq + 9, GameBoard.pieces[sq + 9]);
 			}
 			
 			if (SQOFFBOARD(sq + 11) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 11]] === COLORS.BLACK)
 			{
-				//add pawn cap move
+				AddWhitePawnCaptureMove(sq, sq + 11, GameBoard.pieces[sq + 11]);
 			}
 			
 			//En passant cases
@@ -57,7 +151,7 @@ function GenerateMoves()
 			{
 				if (sq + 9 === GameBoard.enPas)
 				{
-					//add en pas move
+					AddEnPassantMove(MOVE(sq, sq + 9, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
 				}
 			}
 			
@@ -65,7 +159,7 @@ function GenerateMoves()
 			{
 				if (sq + 11 === GameBoard.enPas)
 				{
-					//add en pas move
+					AddEnPassantMove(MOVE(sq, sq + 11, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
 				}
 			}
 		}
@@ -79,7 +173,7 @@ function GenerateMoves()
 			{
 				if (SqAttacked(SQUARES.F1, COLORS.BLACK) === BOOL.FALSE && SqAttacked(SQUARES.E1, COLORS.BLACK) === BOOL.FALSE)
 				{
-					//Add quiet move
+					AddQuietMove(MOVE(SQUARES.E1, SQUARES.G1, PIECES.EMPTY, PIECES.EMPTY, MFLAGCA));
 				}
 			}
 		}
@@ -92,7 +186,7 @@ function GenerateMoves()
 			{
 				if (SqAttacked(SQUARES.D1, COLORS.BLACK) === BOOL.FALSE && SqAttacked(SQUARES.E1, COLORS.BLACK) === BOOL.FALSE)
 				{
-					//Add quiet move
+					AddQuietMove(MOVE(SQUARES.E1, SQUARES.C1, PIECES.EMPTY, PIECES.EMPTY, MFLAGCA));
 				}
 			}
 		}
@@ -112,22 +206,24 @@ function GenerateMoves()
 			//Moving forward one or two
 			if (GameBoard.pieces[sq - 10] === PIECES.EMPTY)
 			{
-				//add pawn move
+				//Forward one
+				AddBlackPawnQuietMove(sq, sq - 10);
+				//Forward two
 				if (RanksBrd[sq] === RANKS.RANK_7 && GameBoard.pieces[sq - 20] === PIECES.EMPTY)
 				{
-					// Add quiet move here
+					AddQuietMove(MOVE(sq, sq - 20, PIECES.EMPTY, PIECES.EMPTY, MFLAGPS));
 				}
 			}
 			
 			//Capture cases
 			if (SQOFFBOARD(sq - 9) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 9]] === COLORS.WHITE)
 			{
-				//add pawn cap move
+				AddBlackPawnCaptureMove(sq, sq - 9, GameBoard.pieces[sq - 9]);
 			}
 			
 			if (SQOFFBOARD(sq - 11) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 11]] === COLORS.WHITE)
 			{
-				//add pawn cap move
+				AddBlackPawnCaptureMove(sq, sq - 11, GameBoard.pieces[sq - 11]);
 			}
 			
 			//En passant cases
@@ -135,7 +231,7 @@ function GenerateMoves()
 			{
 				if (sq - 9 === GameBoard.enPas)
 				{
-					//add en pas move
+					AddEnPassantMove(MOVE(sq, sq - 9, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
 				}
 			}
 			
@@ -143,7 +239,7 @@ function GenerateMoves()
 			{
 				if (sq - 11 === GameBoard.enPas)
 				{
-					//add en pas move
+					AddEnPassantMove(MOVE(sq, sq - 11, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
 				}
 			}
 		}
@@ -157,7 +253,7 @@ function GenerateMoves()
 			{
 				if (SqAttacked(SQUARES.F8, COLORS.WHITE) === BOOL.FALSE && SqAttacked(SQUARES.E8, COLORS.WHITE) === BOOL.FALSE)
 				{
-					//Add quiet move
+					AddQuietMove(MOVE(SQUARES.E8, SQUARES.G8, PIECES.EMPTY, PIECES.EMPTY, MFLAGCA));
 				}
 			}
 		}
@@ -170,7 +266,7 @@ function GenerateMoves()
 			{
 				if (SqAttacked(SQUARES.D8, COLORS.WHITE) === BOOL.FALSE && SqAttacked(SQUARES.E8, COLORS.WHITE) === BOOL.FALSE)
 				{
-					//Add quiet move
+					AddQuietMove(MOVE(SQUARES.E8, SQUARE.C8, PIECES.EMPTY, PIECES.EMPTY, MFLAGCA));
 				}
 			}
 		}
@@ -191,7 +287,7 @@ function GenerateMoves()
 			//Loop through all moves
 			for (let i = 0; i < DirNum[pce]; i++)
 			{
-				let dir = PceDir[pce][i];
+				dir = PceDir[pce][i];
 				//target square
 				t_sq = sq + dir;
 				//break out of the loop if target square is off board
@@ -204,13 +300,13 @@ function GenerateMoves()
 				{
 					if (PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side)
 					{
-						//add a capture
+						AddCaptureMove(MOVE(sq, t_sq, GameBoard.pieces[t_sq]), PIECES.EMPTY, NOMOVE);
 					}
 					
 				}
 				else 
 				{
-					//add a quiet move
+					AddQuietMove(MOVE(sq, t_sq, PIECES.EMPTY, PIECES.EMPTY, NOMOVE));
 				}
 			}
 		}
@@ -218,7 +314,6 @@ function GenerateMoves()
 	}
 	
 	//Sliding pieces implementation (bishop, rook, queen)
-	
 	pceIndex = LoopSlideIndex[GameBoard.side];
 	pce = LoopSlidePce[pceIndex++];
 	
@@ -229,31 +324,30 @@ function GenerateMoves()
 		for (let pceNum = 0; pceNum < GameBoard.pceNum[pce]; pceNum++)
 		{
 			sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+			
 			//Loop through all moves
 			for (let i = 0; i < DirNum[pce]; i++)
 			{
-				let dir = PceDir[pce][i];
+				dir = PceDir[pce][i];
 				//target square
 				t_sq = sq + dir;
 				//loop until piece goes off board
-				while (SQOFFBOARD(t_sq) === BOOL.FALSE)
+				
+				while (SQOFFBOARD(t_sq) == BOOL.FALSE)
 				{
 					//encounters a piece	
 					if (GameBoard.pieces[t_sq] !== PIECES.EMPTY)
 					{
 						//opposite side induces a capture, same side means we break from the loop
-						if (PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side)
+						if (PieceCol[GameBoard.pieces[t_sq]] !== GameBoard.side)
 						{
-							//add capture
+							AddCaptureMove(MOVE(sq, t_sq, GameBoard.pieces[t_sq]), PIECES.EMPTY, NOMOVE);
 						}
-						else 
-						{
-							break;
-						}
+						break;
 					}
 					else 
 					{
-						//Add quiet move
+						AddQuietMove(MOVE(sq, t_sq, PIECES.EMPTY, PIECES.EMPTY, NOMOVE));
 						t_sq += dir;
 					}
 				}
@@ -262,6 +356,30 @@ function GenerateMoves()
 		pce = LoopSlidePce[pceIndex++];
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

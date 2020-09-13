@@ -69,7 +69,7 @@ const BRD_SQ_NUM = 120;
 const FilesBrd = new Array(BRD_SQ_NUM);
 const RanksBrd = new Array(BRD_SQ_NUM);
 
-var START_FEN =  "4b2B/1p1q4/4n3/1kpP4/2r3Q1/p2P4/Pb4p1/4K3 w - - 0 1";
+var START_FEN =  "4b2B/1p1q4/4n3/1kpP4/2r3Q1/p2P4/Pb4p1/4K3 b - - 0 1";
 const PceChar = ".PNBRQKpnbrqk";
 const SideChar = "wb";
 const RankChar = "12345678";
@@ -176,9 +176,9 @@ const RkDir	= [-1, -10, 1, 10];
 const BiDir	= [-9, -11, 9, 11];
 const KiDir = [-1, -10, 1, 10, -9, -11, 9, 11]
 
-const DirNum = [0, 0, 8, 4, 4, 8, 0, 8, 4, 4, 8];	//# of dir indexed by piece type
+const DirNum = [0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8];	//# of dir indexed by piece type
 //Array gets directions indexed by piece type, king and queen are synonymous
-const PceDir = [0, 0, KnDir, BiDir, RkDir, KiDir, 0, KnDir, BiDir, RkDir, KiDir];
+const PceDir = [0, 0, KnDir, BiDir, RkDir, KiDir, KiDir, 0, KnDir, BiDir, RkDir, KiDir, KiDir];
 
 //If we're white, we loop from index0 until we hit the zero element, if black start at 3
 const LoopNonSlidePce = [PIECES.wN, PIECES.wK, 0, PIECES.bN, PIECES.bK, 0];
@@ -236,17 +236,6 @@ function SQOFFBOARD(sq)
 {
 	return (FilesBrd[sq] === SQUARES.OFFBOARD);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

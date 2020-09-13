@@ -1,11 +1,17 @@
 Day 2: September 12, 2020 17 - 30
 
+This section of the tutorial focused on (pseudo) legal move generation. By the end, we have created a function that prints all legal moves to console, barring checking for the king being in check at the end of the turn. 
 
+First, I must say that while BFS's complete lack of use of classes negatively impacts code readability, it greatly reduces the number of files that need to be created, and probably results in an engine with extremely fast mechanics. When I made my engine (which featured separate derived classes for each piece), I skimmed the stockfish source code and also noted the lack of classes. 
 
--like the complete lack of classes
--SqAttacked seems hefty, recalculating things
--any reason for bool.true? rather than just true
--elegant bit storage
--represents everything with numbers which is really cool as opposed to classes 
--too many arrays to represent different things, knights and kings as non sliding pieces is probably unnecessary
--not a fan of writing this gigantic function without tests
+In chess, there are several special case moves that need to be addressed separately, like castling, en passant, etc. I did not plan this out from the beginning, and so the logic in my legal move generation code was completely chaotic, and I didn't even get to implement en passant. BFS's solution is extremely elegant: he represents a move, including all of its special cases, in the form of a 25 bit number, where each bits represent stored information about a move. Using the bitwise and operator, and bit shifting, we can easily access any information about the move.
+
+BFS also introduces the concept of move "flags", constants that represent the "bit range" of where in the move number certain information is stored. For example, the flag "MFLAGCAP" is equal to 0x7C000, because this information is stored here in the number
+0000 0000 0011 1100 0000 0000 0000
+ 	   7    C    0    0    0
+(4 bits is sufficient because 2^4 = 16 is an upper bound for the total number of capturable pieces)
+If a flag is raised for a move, it presumably gets handled in the MakeMove function (which I have yet to implement).
+
+We then write a function "SqAttacked", which returns if a given square is attacked by a piece or not. His algorithm is relatively inefficient: he iterates through every square, and for each square, iterates through every piece of the opposite color to see if it can reach that square. I believe my method is faster, having a predefined array representing if a square is attacked, and creating a function to iterating through every piece of the other color, and setting each square it can attack to 'true'. Then, accessing if a square is attacked is an O(1) operation... calling BFS's SqAttacked function on the same square would calculate everything all over again! Additionally, the runtime of my algorithm to search for the attacked squares is much faster. Although they are both O(PL) operations, where P is the number of pieces on the board, and L is the average number of legal moves per piece, my algorithm will be faster at a constant rate of roughly the total number of squares on the board.
+
+The biggest chunk of this time in this section was devoted to the MoveGeneration() function, which returned all pseudo legal moves. BFS did provide sufficient intellectual framework for his implementation to make sense, the only thing I will say about his process is that he went ~8 videos without testing the code at all or giving the watcher any semblance of progress (printing each mini advancement to console to prove we were actually making progress) until the very end. Otherwise, his implementation was structured quite logically. He handled pawns separately from other pieces, as they have many special move properties, and non-sliding pieces (knights, kings) and sliding pieces (queen, rook, bishop) thereafter.

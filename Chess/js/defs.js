@@ -184,6 +184,9 @@ const PceDir = [0, 0, KnDir, BiDir, RkDir, KiDir, 0, KnDir, BiDir, RkDir, KiDir]
 const LoopNonSlidePce = [PIECES.wN, PIECES.wK, 0, PIECES.bN, PIECES.bK, 0];
 const LoopNonSlideIndex = [0, 3]; //stores where se start looping through LoopNonSlidePiece from a given side
 
+const LoopSlidePce =   [PIECES.wB, PIECES.wR, PIECES.wQ, 0, PIECES.bB, PIECES.bR, PIECES.bQ, 0];
+const LoopSlideIndex = [0, 4];
+
 /*
 What do we store about a move?
 From square - 64 squares, so 7 bits

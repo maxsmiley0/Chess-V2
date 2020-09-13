@@ -216,6 +216,51 @@ function GenerateMoves()
 		}
 		pce = LoopNonSlidePce[pceIndex++];	//set piece to the next piece in the non-sliding set
 	}
+	
+	//Sliding pieces implementation (bishop, rook, queen)
+	
+	pceIndex = LoopSlideIndex[GameBoard.side];
+	pce = LoopSlidePce[pceIndex++];
+	
+	//Looping through all of the sliding pieces
+	while (pce !== 0)
+	{
+		//Looping through all pieces of this type / color
+		for (let pceNum = 0; pceNum < GameBoard.pceNum[pce]; pceNum++)
+		{
+			sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+			//Loop through all moves
+			for (let i = 0; i < DirNum[pce]; i++)
+			{
+				let dir = PceDir[pce][i];
+				//target square
+				t_sq = sq + dir;
+				//loop until piece goes off board
+				while (SQOFFBOARD(t_sq) === BOOL.FALSE)
+				{
+					//encounters a piece	
+					if (GameBoard.pieces[t_sq] !== PIECES.EMPTY)
+					{
+						//opposite side induces a capture, same side means we break from the loop
+						if (PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side)
+						{
+							//add capture
+						}
+						else 
+						{
+							break;
+						}
+					}
+					else 
+					{
+						//Add quiet move
+						t_sq += dir;
+					}
+				}
+			}
+		}
+		pce = LoopSlidePce[pceIndex++];
+	}
 }
 
 

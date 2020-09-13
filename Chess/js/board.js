@@ -17,9 +17,23 @@ var GameBoard =
 	pceNum: new Array(13),			//Indexed by piece, how many of a given piece exists?
 	posKey: 0,						//Maps a board to a key (integer, unique)
 	
+	/*
+	moveList stores all of the moves in the search tree, in order
+	So, first the moves for a one ply search are stored, then the moves for a two-ply,
+	then for a 3-ply, etc.
+	However, how do we keep track of where the 1-ply, 2-ply, 3-ply etc. moves are sectioned
+	off?
+	moveListStart stores this information, it stores the first INDEX of a move at a given
+	ply for moveListStart
+	For example, if we want to loop through every move in a 3-ply search, we loop from
+	i = moveListStart[3] until we hit i = moveListStart[4]
+	And access the moves through moveList[i]
+	*/
+	
+	moveListStart: new Array(MAXDEPTH),   
 	moveList: new Array(MAXDEPTH * MAXPOSITIONMOVES),	//generated moves
 	moveScores: new Array(MAXDEPTH * MAXPOSITIONMOVES),//scores for generated moves
-	moveListStart: new Array(MAXDEPTH),   //move list starts for a give depth
+	
 	
 	/*
 	pList stores position of each pieces

@@ -219,6 +219,7 @@ const MFLAGPS = 0x80000;	//promotion flag
 const MFLAGCA = 0x100000;	//castle flag
 const MFLAGCAP = 0x7C000;	//capture flag
 const MFLAGPROM = 0xF00000;	//promotion flag
+const NOMOVE = 0;			//no flag
 
 
 

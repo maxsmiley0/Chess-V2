@@ -1,1 +1,3 @@
 Day 3: September 13, 2020 31 - ???
+
+-made add piece and clear piece but didn't even implement in move piece?

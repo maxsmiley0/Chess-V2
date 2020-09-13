@@ -232,11 +232,23 @@ const MFLAGCAP = 0x7C000;	//capture flag
 const MFLAGPROM = 0xF00000;	//promotion flag
 const NOMOVE = 0;			//no flag
 
+//Returns true if a square is off board, false if on board
 function SQOFFBOARD(sq)
 {
 	return (FilesBrd[sq] == SQUARES.OFFBOARD);
 }
 
+/*
+When we want to make a move, we have to update the position key
+Recall we can add a piece to a square by XORing its key, and since XOR is its own inverse
+we can also remove the piece from that square by XORing the same key
+We also change side, en passant, castling with the keys
+These functions are simply auxiliary functions for the MovePiece function
+*/
+function HASH_PCE(pce, sq){	GameBoard.posKey ^= PieceKeys[(pce * 120) + sq];}
+function HASH_CA() {GameBoard.posKey ^= CastleKeys[GameBoard.castlePerm]; }
+function HASH_SIDE() {GameBoard.posKey ^= SideKey; }
+function HASH_EP() {GameBoard.posKey ^= PieceKeys[GameBoard.enPas]; }
 
 
 

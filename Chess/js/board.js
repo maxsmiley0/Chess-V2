@@ -53,6 +53,80 @@ var GameBoard =
 	
 };
 
+/*
+We have all of these functions that generate position key, update piece list, etc.
+However, these all run from scratch and take a while, in reality, it is quicker to
+calculate these keys by having the previous position key and simply incrementally updating
+it move by move
+The latter method, while efficient, is more prone to error. This function simply checks
+that everything is working as it should be
+*/
+function CheckBoard() 
+{   
+ 	//Going through all members of GameBoard and ensuring everything checks out
+	const t_pceNum = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	const t_material = [ 0, 0];
+	
+	//Looping through all pieces
+	for(let t_piece = PIECES.wP; t_piece <= PIECES.bK; t_piece++) 
+	{
+		//Looping through all pieces of that type (e.g. from 0 to 7 for the 8 white pawns)	
+		for(let t_pce_num = 0; t_pce_num < GameBoard.pceNum[t_piece]; t_pce_num++)
+		 {
+			//If there is some discontinuity between the GameBoard pieces and pList
+			let sq120 = GameBoard.pList[PCEINDEX(t_piece,t_pce_num)];
+			if(GameBoard.pieces[sq120] != t_piece) 
+			{
+				console.error("Error Pce Lists");
+				return BOOL.FALSE;
+			}
+		}	
+	}
+	
+	//Filling the temp arrays defined at the top of this function
+	for(let sq64 = 0; sq64 < 64; sq64++) 
+	{
+		let sq120 = SQ120(sq64);
+		let t_piece = GameBoard.pieces[sq120];
+		t_pceNum[t_piece]++;
+		t_material[PieceCol[t_piece]] += PieceVal[t_piece];
+	}
+	
+	//Verifying the integrity of the number of pieces stored
+	for(let t_piece = PIECES.wP; t_piece <= PIECES.bK; t_piece++) 
+	{
+		if(t_pceNum[t_piece] != GameBoard.pceNum[t_piece]) 
+		{
+				console.error("Error t_pceNum");
+				return BOOL.FALSE;
+			}	
+	}
+	
+	//Verifying the integrity of the piece colors
+	if(t_material[COLORS.WHITE] != GameBoard.material[COLORS.WHITE] ||
+	   t_material[COLORS.BLACK] != GameBoard.material[COLORS.BLACK]) 
+	{
+		console.error("Error t_material");
+		return BOOL.FALSE;
+	}	
+	
+	//Verifying the integrity of the side to move
+	if(GameBoard.side!=COLORS.WHITE && GameBoard.side!=COLORS.BLACK) 
+	{
+		console.error("Error GameBoard.side");
+		return BOOL.FALSE;
+	}
+	
+	//Verifying the integrity of the position key
+	if(GeneratePosKey() != GameBoard.posKey) 
+	{
+		console.error("Error GameBoard.posKey");
+		return BOOL.FALSE;
+	}	
+	
+	return BOOL.TRUE;
+}
+
 //Prints a board representation to console, for debugging purposes
 function PrintBoard ()
 {	

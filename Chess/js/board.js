@@ -416,7 +416,7 @@ function SqAttacked (sq, side)
 	for (let i = 0; i < KiDir.length; i++)
 	{
 		let piece = GameBoard.pieces[sq + KiDir[i]];
-		if (piece !== SQUARES.OFFBOARD && PieceCol[piece] === side && PieceKing[piece] == BOOL.TRUE)
+		if (piece !== SQUARES.OFFBOARD && PieceCol[piece] === side && PieceKing[piece] === BOOL.TRUE)
 		{
 			return BOOL.TRUE;
 		}

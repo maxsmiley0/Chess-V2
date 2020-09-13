@@ -176,8 +176,49 @@ const RkDir	= [-1, -10, 1, 10];
 const BiDir	= [-9, -11, 9, 11];
 const KiDir = [-1, -10, 1, 10, -9, -11, 9, 11]
 
+/*
+What do we store about a move?
+From square - 64 squares, so 7 bits
+To square - 64 squares, so 7 bits
+If it is an en passant - boolean, so 1 bit
+If we capture a piece - 12 pieces, so 4 bits
+If we promote a piece - 12 pieces, so 4 bits
+If it is a pawn starting move - boolean, so 1 bit
+If it is a castling move - boolean, so 1 bit
+
+We can store this with a single number, and use the bitwise and operator against the
+address space to get that number
+
+0000 0000 0000 0000 0000 0111 1111 -> 0x7F, From Square
+0000 0000 0000 0011 1111 1000 0000 -> >> 7, 0x7F, To Square
+0000 0000 0011 1100 0000 0000 0000 -> >> 14, 0xF, Capture Piece
+0000 0000 0100 0000 0000 0000 0000 -> 0x40000, Is En Passant
+0000 0000 1000 0000 0000 0000 0000 -> 0x80000, Is Pawn Start Move
+0000 1111 0000 0000 0000 0000 0000 -> >>20, 0xF, Promoted Piece
+0001 0000 0000 0000 0000 0000 0000 -> Castle, 0x1000000
+*/
 
 
+
+/*These functions take in a move number, and decompose them into their subsections as 
+specified above
+*/
+
+function FROMSQ(m) { return (m & 0x7F); }
+function TOSQ(m) { return ((m >> 7) & 0x7F); }
+function CAPTURED(m) { return ((m >> 14) & 0xF); }
+function PROMOTED(m) { return ((m >> 20) & 0xF); }
+function PROMOTED(m) { return ((m >> 20) & 0xF); }
+function PROMOTED(m) { return ((m >> 20) & 0xF); }
+function PROMOTED(m) { return ((m >> 20) & 0xF); }
+
+//Defining "flags", which are constants for the locations to check in the move number
+
+const MFLAGEP = 0x40000;	//en passant flag
+const MFLAGPS = 0x80000;	//promotion flag
+const MFLAGCA = 0x100000;	//castle flag
+const MFLAGCAP = 0x7C000;	//capture flag
+const MFLAGPROM = 0xF00000;	//promotion flag
 
 
 

@@ -69,7 +69,7 @@ const BRD_SQ_NUM = 120;
 const FilesBrd = new Array(BRD_SQ_NUM);
 const RanksBrd = new Array(BRD_SQ_NUM);
 
-var START_FEN =  "4b2B/1p1q4/4n3/1kpP4/2r3Q1/p2P4/Pb4p1/4K3 b - - 0 1";
+var START_FEN =  "8/3k4/3Pr1P1/1P3Pp1/2n5/6Q1/P7/3K4 b - - 0 1";
 const PceChar = ".PNBRQKpnbrqk";
 const SideChar = "wb";
 const RankChar = "12345678";
@@ -227,14 +227,14 @@ function PROMOTED(m) { return ((m >> 20) & 0xF); }
 
 const MFLAGEP = 0x40000;	//en passant flag
 const MFLAGPS = 0x80000;	//promotion flag
-const MFLAGCA = 0x100000;	//castle flag
+const MFLAGCA = 0x1000000;	//castle flag
 const MFLAGCAP = 0x7C000;	//capture flag
 const MFLAGPROM = 0xF00000;	//promotion flag
 const NOMOVE = 0;			//no flag
 
 function SQOFFBOARD(sq)
 {
-	return (FilesBrd[sq] === SQUARES.OFFBOARD);
+	return (FilesBrd[sq] == SQUARES.OFFBOARD);
 }
 
 

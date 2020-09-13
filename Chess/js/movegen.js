@@ -34,7 +34,7 @@ function AddEnPassantMove (move)
 function AddWhitePawnCaptureMove (from, to, cap)
 {
 	//Promotion clause
-	if (RanksBrd[from] === RANKS.RANK_7)
+	if (RanksBrd[from] == RANKS.RANK_7)
 	{
 		AddCaptureMove(MOVE(from, to, cap, PIECES.wQ, NOMOVE));
 		AddCaptureMove(MOVE(from, to, cap, PIECES.wR, NOMOVE));
@@ -51,7 +51,7 @@ function AddWhitePawnCaptureMove (from, to, cap)
 function AddBlackPawnCaptureMove (from, to, cap)
 {
 	//Promotion clause	
-	if (RanksBrd[from] === RANKS.RANK_2)
+	if (RanksBrd[from] == RANKS.RANK_2)
 	{
 		AddCaptureMove(MOVE(from, to, cap, PIECES.bQ, NOMOVE));
 		AddCaptureMove(MOVE(from, to, cap, PIECES.bR, NOMOVE));
@@ -67,7 +67,7 @@ function AddBlackPawnCaptureMove (from, to, cap)
 
 function AddWhitePawnQuietMove (from, to)
 {
-	if (RanksBrd[from] === RANKS.RANK_7)
+	if (RanksBrd[from] == RANKS.RANK_7)
 	{
 		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.wQ, NOMOVE));
 		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.wR, NOMOVE));
@@ -82,7 +82,7 @@ function AddWhitePawnQuietMove (from, to)
 
 function AddBlackPawnQuietMove (from, to)
 {
-	if (RanksBrd[from] === RANKS.RANK_2)
+	if (RanksBrd[from] == RANKS.RANK_2)
 	{
 		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.bQ, NOMOVE));
 		AddQuietMove(MOVE(from, to, PIECES.EMPTY, PIECES.bR, NOMOVE));
@@ -123,25 +123,25 @@ function GenerateMoves()
 			//Special cases of pawn
 			
 			//Moving forward one or two
-			if (GameBoard.pieces[sq + 10] === PIECES.EMPTY)
+			if (GameBoard.pieces[sq + 10] == PIECES.EMPTY)
 			{
 				//Forward 1
 				AddWhitePawnQuietMove(sq, sq + 10);
 				
 				//Forward 2
-				if (RanksBrd[sq] === RANKS.RANK_2 && GameBoard.pieces[sq + 20] === PIECES.EMPTY)
+				if (RanksBrd[sq] == RANKS.RANK_2 && GameBoard.pieces[sq + 20] == PIECES.EMPTY)
 				{
 					AddQuietMove(MOVE(sq, sq + 20, PIECES.EMPTY, PIECES.EMPTY, MFLAGPS));
 				}
 			}
 			
 			//Capture cases
-			if (SQOFFBOARD(sq + 9) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 9]] === COLORS.BLACK)
+			if (SQOFFBOARD(sq + 9) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 9]] == COLORS.BLACK)
 			{
 				AddWhitePawnCaptureMove(sq, sq + 9, GameBoard.pieces[sq + 9]);
 			}
 			
-			if (SQOFFBOARD(sq + 11) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 11]] === COLORS.BLACK)
+			if (SQOFFBOARD(sq + 11) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 11]] == COLORS.BLACK)
 			{
 				AddWhitePawnCaptureMove(sq, sq + 11, GameBoard.pieces[sq + 11]);
 			}
@@ -149,7 +149,7 @@ function GenerateMoves()
 			//En passant cases
 			if (GameBoard.enPas != SQUARES.NOSQ)
 			{
-				if (sq + 9 === GameBoard.enPas)
+				if (sq + 9 == GameBoard.enPas)
 				{
 					AddEnPassantMove(MOVE(sq, sq + 9, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
 				}
@@ -157,7 +157,7 @@ function GenerateMoves()
 			
 			if (GameBoard.enPas != SQUARES.NOSQ)
 			{
-				if (sq + 11 === GameBoard.enPas)
+				if (sq + 11 == GameBoard.enPas)
 				{
 					AddEnPassantMove(MOVE(sq, sq + 11, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
 				}
@@ -169,9 +169,9 @@ function GenerateMoves()
 		if (GameBoard.castlePerm & CASTLEBIT.WKCA)
 		{
 			//Pawns can't be on these squares
-			if (GameBoard.pieces[SQUARES.F1] === PIECES.EMPTY && GameBoard.pieces[SQUARES.G1] === PIECES.EMPTY)
+			if (GameBoard.pieces[SQUARES.F1] == PIECES.EMPTY && GameBoard.pieces[SQUARES.G1] == PIECES.EMPTY)
 			{
-				if (SqAttacked(SQUARES.F1, COLORS.BLACK) === BOOL.FALSE && SqAttacked(SQUARES.E1, COLORS.BLACK) === BOOL.FALSE)
+				if (SqAttacked(SQUARES.F1, COLORS.BLACK) == BOOL.FALSE && SqAttacked(SQUARES.E1, COLORS.BLACK) == BOOL.FALSE)
 				{
 					AddQuietMove(MOVE(SQUARES.E1, SQUARES.G1, PIECES.EMPTY, PIECES.EMPTY, MFLAGCA));
 				}
@@ -182,9 +182,9 @@ function GenerateMoves()
 		if (GameBoard.castlePerm & CASTLEBIT.WQCA)
 		{
 			//Pawns can't be on these squares
-			if (GameBoard.pieces[SQUARES.D1] === PIECES.EMPTY && GameBoard.pieces[SQUARES.C1] === PIECES.EMPTY && GameBoard.pieces[SQUARES.B1] === PIECES.EMPTY)
+			if (GameBoard.pieces[SQUARES.D1] == PIECES.EMPTY && GameBoard.pieces[SQUARES.C1] == PIECES.EMPTY && GameBoard.pieces[SQUARES.B1] == PIECES.EMPTY)
 			{
-				if (SqAttacked(SQUARES.D1, COLORS.BLACK) === BOOL.FALSE && SqAttacked(SQUARES.E1, COLORS.BLACK) === BOOL.FALSE)
+				if (SqAttacked(SQUARES.D1, COLORS.BLACK) == BOOL.FALSE && SqAttacked(SQUARES.E1, COLORS.BLACK) == BOOL.FALSE)
 				{
 					AddQuietMove(MOVE(SQUARES.E1, SQUARES.C1, PIECES.EMPTY, PIECES.EMPTY, MFLAGCA));
 				}
@@ -204,24 +204,24 @@ function GenerateMoves()
 			//Special cases of pawn
 			
 			//Moving forward one or two
-			if (GameBoard.pieces[sq - 10] === PIECES.EMPTY)
+			if (GameBoard.pieces[sq - 10] == PIECES.EMPTY)
 			{
 				//Forward one
 				AddBlackPawnQuietMove(sq, sq - 10);
 				//Forward two
-				if (RanksBrd[sq] === RANKS.RANK_7 && GameBoard.pieces[sq - 20] === PIECES.EMPTY)
+				if (RanksBrd[sq] == RANKS.RANK_7 && GameBoard.pieces[sq - 20] == PIECES.EMPTY)
 				{
 					AddQuietMove(MOVE(sq, sq - 20, PIECES.EMPTY, PIECES.EMPTY, MFLAGPS));
 				}
 			}
 			
 			//Capture cases
-			if (SQOFFBOARD(sq - 9) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 9]] === COLORS.WHITE)
+			if (SQOFFBOARD(sq - 9) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 9]] == COLORS.WHITE)
 			{
 				AddBlackPawnCaptureMove(sq, sq - 9, GameBoard.pieces[sq - 9]);
 			}
 			
-			if (SQOFFBOARD(sq - 11) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 11]] === COLORS.WHITE)
+			if (SQOFFBOARD(sq - 11) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 11]] == COLORS.WHITE)
 			{
 				AddBlackPawnCaptureMove(sq, sq - 11, GameBoard.pieces[sq - 11]);
 			}
@@ -229,7 +229,7 @@ function GenerateMoves()
 			//En passant cases
 			if (GameBoard.enPas != SQUARES.NOSQ)
 			{
-				if (sq - 9 === GameBoard.enPas)
+				if (sq - 9 == GameBoard.enPas)
 				{
 					AddEnPassantMove(MOVE(sq, sq - 9, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
 				}
@@ -237,7 +237,7 @@ function GenerateMoves()
 			
 			if (GameBoard.enPas != SQUARES.NOSQ)
 			{
-				if (sq - 11 === GameBoard.enPas)
+				if (sq - 11 == GameBoard.enPas)
 				{
 					AddEnPassantMove(MOVE(sq, sq - 11, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
 				}
@@ -249,9 +249,9 @@ function GenerateMoves()
 		if (GameBoard.castlePerm & CASTLEBIT.BKCA)
 		{
 			//pawns can't be on these squares	
-			if (GameBoard.pieces[SQUARES.F8] === PIECES.EMPTY && GameBoard.pieces[SQUARES.G8] === PIECES.EMPTY)
+			if (GameBoard.pieces[SQUARES.F8] == PIECES.EMPTY && GameBoard.pieces[SQUARES.G8] == PIECES.EMPTY)
 			{
-				if (SqAttacked(SQUARES.F8, COLORS.WHITE) === BOOL.FALSE && SqAttacked(SQUARES.E8, COLORS.WHITE) === BOOL.FALSE)
+				if (SqAttacked(SQUARES.F8, COLORS.WHITE) == BOOL.FALSE && SqAttacked(SQUARES.E8, COLORS.WHITE) == BOOL.FALSE)
 				{
 					AddQuietMove(MOVE(SQUARES.E8, SQUARES.G8, PIECES.EMPTY, PIECES.EMPTY, MFLAGCA));
 				}
@@ -262,11 +262,11 @@ function GenerateMoves()
 		if (GameBoard.castlePerm & CASTLEBIT.BQCA)
 		{
 			//pawns can't be on these squares
-			if (GameBoard.pieces[SQUARES.D8] === PIECES.EMPTY && GameBoard.pieces[SQUARES.C8] === PIECES.EMPTY && GameBoard.pieces[SQUARES.B8] === PIECES.EMPTY)
+			if (GameBoard.pieces[SQUARES.D8] == PIECES.EMPTY && GameBoard.pieces[SQUARES.C8] == PIECES.EMPTY && GameBoard.pieces[SQUARES.B8] == PIECES.EMPTY)
 			{
-				if (SqAttacked(SQUARES.D8, COLORS.WHITE) === BOOL.FALSE && SqAttacked(SQUARES.E8, COLORS.WHITE) === BOOL.FALSE)
+				if (SqAttacked(SQUARES.D8, COLORS.WHITE) == BOOL.FALSE && SqAttacked(SQUARES.E8, COLORS.WHITE) == BOOL.FALSE)
 				{
-					AddQuietMove(MOVE(SQUARES.E8, SQUARE.C8, PIECES.EMPTY, PIECES.EMPTY, MFLAGCA));
+					AddQuietMove(MOVE(SQUARES.E8, SQUARES.C8, PIECES.EMPTY, PIECES.EMPTY, MFLAGCA));
 				}
 			}
 		}
@@ -278,7 +278,7 @@ function GenerateMoves()
 	pce = LoopNonSlidePce[pceIndex++];
 	
 	//Looping through all non-sliding pieces
-	while (pce !== 0)
+	while (pce != 0)
 	{
 		//Looping through all pieces of this type / color
 		for (let pceNum = 0; pceNum < GameBoard.pceNum[pce]; pceNum++)
@@ -291,12 +291,12 @@ function GenerateMoves()
 				//target square
 				t_sq = sq + dir;
 				//break out of the loop if target square is off board
-				if (SQOFFBOARD(t_sq) === BOOL.TRUE)
+				if (SQOFFBOARD(t_sq) == BOOL.TRUE)
 				{
 					continue;
 				}
 				
-				if (GameBoard.pieces[t_sq] !== PIECES.EMPTY)
+				if (GameBoard.pieces[t_sq] != PIECES.EMPTY)
 				{
 					if (PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side)
 					{
@@ -318,7 +318,7 @@ function GenerateMoves()
 	pce = LoopSlidePce[pceIndex++];
 	
 	//Looping through all of the sliding pieces
-	while (pce !== 0)
+	while (pce != 0)
 	{
 		//Looping through all pieces of this type / color
 		for (let pceNum = 0; pceNum < GameBoard.pceNum[pce]; pceNum++)
@@ -336,10 +336,10 @@ function GenerateMoves()
 				while (SQOFFBOARD(t_sq) == BOOL.FALSE)
 				{
 					//encounters a piece	
-					if (GameBoard.pieces[t_sq] !== PIECES.EMPTY)
+					if (GameBoard.pieces[t_sq] != PIECES.EMPTY)
 					{
 						//opposite side induces a capture, same side means we break from the loop
-						if (PieceCol[GameBoard.pieces[t_sq]] !== GameBoard.side)
+						if (PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side)
 						{
 							AddCaptureMove(MOVE(sq, t_sq, GameBoard.pieces[t_sq]), PIECES.EMPTY, NOMOVE);
 						}

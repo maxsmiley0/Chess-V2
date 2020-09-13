@@ -1,5 +1,7 @@
 Day 2: September 12, 2020 17 - 30
 
+
+
 -like the complete lack of classes
 -SqAttacked seems hefty, recalculating things
 -any reason for bool.true? rather than just true

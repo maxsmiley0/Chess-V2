@@ -106,7 +106,7 @@ function GeneratePosKey ()
 	{
 		let piece = GameBoard.pieces[sq];
 		//If piece is not empty or off board
-		if (piece !== PIECES.EMPTY &&  piece !== PIECES.OFFBOARD)
+		if (piece != PIECES.EMPTY &&  piece != PIECES.OFFBOARD)
 		{
 			//XOR the key corresponding to a given piece on a square
 			finalKey ^= PieceKeys[(piece * 120) + sq];
@@ -279,13 +279,13 @@ function ParseFen (fen)
 		fenCnt++;
 	}
 	
-	GameBoard.side = (fen[fenCnt] === 'w') ? COLORS.WHITE : COLORS.BLACK;	//Sets turn
+	GameBoard.side = (fen[fenCnt] == 'w') ? COLORS.WHITE : COLORS.BLACK;	//Sets turn
 	fenCnt += 2;	//advances to castling privileges
 	
 	//Loop to 4 because there could exist up to 4 characters
 	for (let i = 0; i < 4; i++, fenCnt++)
 	{
-		if (fen[fenCnt] === ' ')
+		if (fen[fenCnt] == ' ')
 		{
 			break;
 		}
@@ -302,7 +302,7 @@ function ParseFen (fen)
 	
 	fenCnt++;	//Moves on to en passant square
 	
-	if (fen[fenCnt] !== '-')
+	if (fen[fenCnt] != '-')
 	{
 		file = fen[fenCnt].charCodeAt() - 'a'.charCodeAt();	//Number of ascii chars away from 'a'
 		rank = parseInt(fen[fenCnt + 1], 10);
@@ -349,10 +349,10 @@ function PrintSqAttacked ()
 function SqAttacked (sq, side)
 {	
 	//pawn attack
-	if (side === COLORS.WHITE)
+	if (side == COLORS.WHITE)
 	{
 		//diagonals move by 9 and 11 in the 12x10 board
-		if (GameBoard.pieces[sq - 11] === PIECES.wP || GameBoard.pieces[sq - 9] === PIECES.wP)
+		if (GameBoard.pieces[sq - 11] == PIECES.wP || GameBoard.pieces[sq - 9] == PIECES.wP)
 		{
 			return BOOL.TRUE;
 		}
@@ -360,7 +360,7 @@ function SqAttacked (sq, side)
 	else 
 	{
 		//diagonals move by 9 and 11 in the 12x10 board
-		if (GameBoard.pieces[sq + 11] === PIECES.bP || GameBoard.pieces[sq + 9] === PIECES.bP)
+		if (GameBoard.pieces[sq + 11] == PIECES.bP || GameBoard.pieces[sq + 9] == PIECES.bP)
 		{
 			return BOOL.TRUE;
 		}
@@ -370,7 +370,7 @@ function SqAttacked (sq, side)
 	for (let i = 0; i < KnDir.length; i++)
 	{
 		let piece = GameBoard.pieces[sq + KnDir[i]];
-		if (piece !== SQUARES.OFFBOARD && PieceCol[piece] === side && PieceKnight[piece] == BOOL.TRUE)
+		if (piece != SQUARES.OFFBOARD && PieceCol[piece] == side && PieceKnight[piece] == BOOL.TRUE)
 		{
 			return BOOL.TRUE;
 		}
@@ -382,14 +382,14 @@ function SqAttacked (sq, side)
 		let t_sq = sq + RkDir[i];
 		let piece = GameBoard.pieces[t_sq];
 		//loop until we go off the board
-		while (piece !== SQUARES.OFFBOARD)
+		while (piece != SQUARES.OFFBOARD)
 		{
 			//break out of the loop if we run into a piece
-			if (piece !== PIECES.EMPTY)
+			if (piece != PIECES.EMPTY)
 			{
 				//Returns true if there is a rook or queen horizontally / vertically
 				//Breaks if wrong color
-				if (PieceRookQueen[piece] === BOOL.TRUE && PieceCol[piece] === side)
+				if (PieceRookQueen[piece] == BOOL.TRUE && PieceCol[piece] == side)
 				{
 					return BOOL.TRUE;
 				}
@@ -407,14 +407,14 @@ function SqAttacked (sq, side)
 		let t_sq = sq + BiDir[i];
 		let piece = GameBoard.pieces[t_sq];
 		//loop until we go off the board
-		while (piece !== SQUARES.OFFBOARD)
+		while (piece != SQUARES.OFFBOARD)
 		{
 			//break out of the loop if we run into a piece
-			if (piece !== PIECES.EMPTY)
+			if (piece != PIECES.EMPTY)
 			{
 				//Returns true if there is a bishop or queen diagonally
 				//Breaks if wrong color
-				if (PieceBishopQueen[piece] === BOOL.TRUE && PieceCol[piece] === side)
+				if (PieceBishopQueen[piece] == BOOL.TRUE && PieceCol[piece] == side)
 				{
 					return BOOL.TRUE;
 				}
@@ -430,7 +430,7 @@ function SqAttacked (sq, side)
 	for (let i = 0; i < KiDir.length; i++)
 	{
 		let piece = GameBoard.pieces[sq + KiDir[i]];
-		if (piece !== SQUARES.OFFBOARD && PieceCol[piece] === side && PieceKing[piece] === BOOL.TRUE)
+		if (piece != SQUARES.OFFBOARD && PieceCol[piece] == side && PieceKing[piece] == BOOL.TRUE)
 		{
 			return BOOL.TRUE;
 		}

@@ -1,0 +1,9 @@
+Day 2: September 12, 2020 17 - ???
+
+-like the complete lack of classes
+-SqAttacked seems hefty, recalculating things
+-any reason for bool.true? rather than just true
+-elegant bit storage
+-represents everything with numbers which is really cool as opposed to classes 
+-too many arrays to represent different things, knights and kings as non sliding pieces is probably unnecessary
+-not a fan of writing this gigantic function without tests

@@ -14,6 +14,9 @@ function GenerateMoves()
 	
 	let pceType;
 	let sq;
+	let t_sq;
+	let pceIndex;
+	let pce;
 	
 	//Pawns have direction, so we have to specify the color
 	if (GameBoard.side == COLORS.WHITE)
@@ -39,12 +42,12 @@ function GenerateMoves()
 			}
 			
 			//Capture cases
-			if (sq + 9 !== SQUARES.OFFBOARD && PieceCol[GameBoard.pieces[sq + 9]] === COLORS.BLACK)
+			if (SQOFFBOARD(sq + 9) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 9]] === COLORS.BLACK)
 			{
 				//add pawn cap move
 			}
 			
-			if (sq + 11 !== SQUARES.OFFBOARD && PieceCol[GameBoard.pieces[sq + 11]] === COLORS.BLACK)
+			if (SQOFFBOARD(sq + 11) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 11]] === COLORS.BLACK)
 			{
 				//add pawn cap move
 			}
@@ -93,8 +96,6 @@ function GenerateMoves()
 				}
 			}
 		}
-		
-		pceType = PIECES.wN; //Setting up for knights, which we will check next
 	}
 	else 
 	{
@@ -119,12 +120,12 @@ function GenerateMoves()
 			}
 			
 			//Capture cases
-			if (sq - 9 !== SQUARES.OFFBOARD && PieceCol[GameBoard.pieces[sq - 9]] === COLORS.WHITE)
+			if (SQOFFBOARD(sq - 9) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 9]] === COLORS.WHITE)
 			{
 				//add pawn cap move
 			}
 			
-			if (sq - 11 !== SQUARES.OFFBOARD && PieceCol[GameBoard.pieces[sq - 11]] === COLORS.WHITE)
+			if (SQOFFBOARD(sq - 11) === BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 11]] === COLORS.WHITE)
 			{
 				//add pawn cap move
 			}
@@ -173,8 +174,47 @@ function GenerateMoves()
 				}
 			}
 		}
-		
-		pceType = PIECES.bN; //setting it up to check the next piece, the black knight
+	}
+	
+	//Non-Sliding pieces implementation (king, knight)
+	
+	pceIndex = LoopNonSlideIndex[GameBoard.side];
+	pce = LoopNonSlidePce[pceIndex++];
+	
+	//Looping through all non-sliding pieces
+	while (pce !== 0)
+	{
+		//Looping through all pieces of this type / color
+		for (let pceNum = 0; pceNum < GameBoard.pceNum[pce]; pceNum++)
+		{
+			sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+			//Loop through all moves
+			for (let i = 0; i < DirNum[pce]; i++)
+			{
+				let dir = PceDir[pce][i];
+				//target square
+				t_sq = sq + dir;
+				//break out of the loop if target square is off board
+				if (SQOFFBOARD(t_sq) === BOOL.TRUE)
+				{
+					continue;
+				}
+				
+				if (GameBoard.pieces[t_sq] !== PIECES.EMPTY)
+				{
+					if (PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side)
+					{
+						//add a capture
+					}
+					
+				}
+				else 
+				{
+					//add a quiet move
+				}
+			}
+		}
+		pce = LoopNonSlidePce[pceIndex++];	//set piece to the next piece in the non-sliding set
 	}
 }
 

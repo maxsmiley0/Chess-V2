@@ -176,6 +176,14 @@ const RkDir	= [-1, -10, 1, 10];
 const BiDir	= [-9, -11, 9, 11];
 const KiDir = [-1, -10, 1, 10, -9, -11, 9, 11]
 
+const DirNum = [0, 0, 8, 4, 4, 8, 0, 8, 4, 4, 8];	//# of dir indexed by piece type
+//Array gets directions indexed by piece type, king and queen are synonymous
+const PceDir = [0, 0, KnDir, BiDir, RkDir, KiDir, 0, KnDir, BiDir, RkDir, KiDir];
+
+//If we're white, we loop from index0 until we hit the zero element, if black start at 3
+const LoopNonSlidePce = [PIECES.wN, PIECES.wK, 0, PIECES.bN, PIECES.bK, 0];
+const LoopNonSlideIndex = [0, 3]; //stores where se start looping through LoopNonSlidePiece from a given side
+
 /*
 What do we store about a move?
 From square - 64 squares, so 7 bits
@@ -220,6 +228,11 @@ const MFLAGCA = 0x100000;	//castle flag
 const MFLAGCAP = 0x7C000;	//capture flag
 const MFLAGPROM = 0xF00000;	//promotion flag
 const NOMOVE = 0;			//no flag
+
+function SQOFFBOARD(sq)
+{
+	return (FilesBrd[sq] === SQUARES.OFFBOARD);
+}
 
 
 

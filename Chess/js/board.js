@@ -44,7 +44,20 @@ var GameBoard =
 	*/
 	
 	//Making sure pList has enough space
-	pList: new Array(14 * 10)
+	pList: new Array(14 * 10),
+	
+	/*
+	Principal Variation Table rundown: has 10000 entries
+	Entries are indexed by the position key % 10000
+	PvTable STORES the principal first move when searching from alpha beta
+	PvTable stores a position, and a move
+	*/
+	
+	PvTable: [],						//stores our pv information 10k entries
+	PvArray: new Array(MAXDEPTH),		//stores the principal variation line
+	
+	searchHistory: new Array(14 * BRD_SQ_NUM),	//orders piece moves by alpha cutoffs
+	searchKiller: new Array(3 * MAXDEPTH)		//orders killer moves by beta cutoffs
 };
 
 /*

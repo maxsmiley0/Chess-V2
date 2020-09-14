@@ -83,12 +83,12 @@ function EvalPosition ()
 		score += RookTable[SQ64(sq)];
 	}
 	
-	//We actually use the Rook Table / 2 for the queen
+	//We actually use the Rook Table for the queen
 	pce = PIECES.wQ;
 	for (let pceNum = 0; pceNum < GameBoard.pceNum[pce]; pceNum++)
 	{
 		sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-		score += RookTable[Mirror64(SQ64(sq))]/2;
+		score += RookTable[Mirror64(SQ64(sq))];
 	}
 	
 	pce = PIECES.bP;
@@ -119,12 +119,12 @@ function EvalPosition ()
 		score -= RookTable[Mirror64(SQ64(sq))];
 	}
 	
-	//We actually use the Rook Table / 2 for the queen
+	//We actually use the Rook Table for the queen
 	pce = PIECES.bQ;
 	for (let pceNum = 0; pceNum < GameBoard.pceNum[pce]; pceNum++)
 	{
 		sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-		score -= RookTable[Mirror64(SQ64(sq))]/2;
+		score -= RookTable[Mirror64(SQ64(sq))];
 	}
 	
 	if (GameBoard.pceNum[PIECES.wB] >= 2)

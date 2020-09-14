@@ -12,6 +12,16 @@ var SearchController =
 	thinking: 0				//bool if computer is thinking
 };
 
+//Simply clears PvTable
+function ClearPvTable ()
+{
+	for (let i = 0; i < PVENTRIES; i++)
+	{
+		GameBoard.PvTable[i].move = NOMOVE;
+		GameBoard.PvTable[i].posKey = 0;
+	}
+}
+
 //Returns if a position has already occurred
 function IsRepetition ()
 {
@@ -79,19 +89,30 @@ function AlphaBeta (alpha, beta, depth)
 		EvalPosition();
 	}
 	
+	let InCheck = SqAttacked(GameBoard.pList[PCEINDEX(Kings[GameBoard.side], 0)], GameBoard.side^1);
+	
+	//If we find a line where we're in check, allocate an extra search ply, because it could often
+	//to a dynamic line, with relatively small consequence (since moves out of checks are often extremely limited)
+	if (InCheck == BOOL.TRUE)
+	{
+		depth++;
+	}
+	
 	let Score = -INFINITE;
 	
 	GenerateMoves();
 	
-	/*
-	Get PV Move (because we want to search best moves first)
-	Order PV Move (set high move ordering score)
-	*/
+	PrintMoveList();
 	
 	let Legal = 0;				//How many legal moves have we made?
 	let OldAlpha = alpha;		//Check to see if new best move is found (and store in PV table)
 	let BestMove = NOMOVE;
 	let Move = NOMOVE;
+	
+	/*
+	Get PV Move (because we want to search best moves first)
+	Order PV Move (set high move ordering score)
+	*/
 	
 	//Loop through our moves
 	for (let MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; MoveNum++)
@@ -137,18 +158,62 @@ function AlphaBeta (alpha, beta, depth)
 		}
 	}
 	
-	/*
-	Mate check: 
-	are we in check? then return +- inf
-	else return 0
-	*/
+	//We didn't find any legal moves, so the game is over
+	if (Legal == 0)
+	{
+		//If in check, it's checkmate
+		if (InCheck == BOOL.TRUE)
+		{
+			//Adding ply so we can tell how many move leads to mate
+			//Don't need to care about sign, taken care of by NegaMax
+			return -MATE + GameBoard.ply;
+		}
+		//If not in check, stalemate
+		else 
+		{	
+			return 0;
+		}
+	}
 	
+	//New best move, store it in the PvTable
 	if (alpha != OldAlpha)
 	{
-		//store PvMove
+		StorePvMove(BestMove);
 	}
 	
 	return alpha;
+}
+
+/*
+Clears our history heuristic (how we order quiet moves through alpha cutoffs) 
+Clears killer move heuristic (how we order moves through beta cutoffs)
+Clears PvTable
+To be called before we start our search
+*/
+function ClearForSearch ()
+{
+	//indexed by piece and square
+	for (let i = 0; i < 14 * BRD_SQ_NUM; i++)
+	{
+		GameBoard.searchHistory[i] = 0;
+	}
+	
+	//indexed by ply, we store 3 of them per ply
+	for (let i = 0; i < 3 * MAXDEPTH; i++)
+	{
+		GameBoard.searchKillers[i] = 0;
+	}
+	
+	ClearPvTable();
+	GameBoard.ply = 0;
+	
+	//Resetting members of the SearchController object literal
+	SearchController.nodes = 0;
+	SearchController.fh = 0;
+	SearchController.fhf = 0;
+	SearchController.start = $.now();
+	SearchController.stop = BOOL.FALSE;
+	
 }
 
 //Called to get a best move for the current position at the allocated depth / move time
@@ -156,6 +221,8 @@ function SearchPosition ()
 {
 	let bestMove = NOMOVE;
 	let bestScore = -INFINITE;
+	
+	ClearForSearch();
 	
 	//Iterative deepening framework
 	for (let currentDepth = 1; currentDepth <= SearchController.depth; currentDepth++)

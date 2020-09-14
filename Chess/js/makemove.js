@@ -93,10 +93,12 @@ function MakeMove (move)
 	let to = TOSQ(move);
 	let side = GameBoard.side;
 	
+	GameBoard.history[GameBoard.hisPly].posKey = GameBoard.posKey;
+	
 	//Checking flags
 	
 	//en passant case
-	if (move & MFLAGEP)
+	if ((move & MFLAGEP) != 0)
 	{
 		if (side == COLORS.WHITE)
 		{
@@ -110,12 +112,12 @@ function MakeMove (move)
 		}
 	}
 	//castling case
-	else if (move & MFLAGCA)
+	else if ((move & MFLAGCA) != 0)
 	{
 		switch (to)
 		{
 			case SQUARES.C1:
-				MovePiece(SQUARES.A1, SQUARES.D8);
+				MovePiece(SQUARES.A1, SQUARES.D1);
 				break;
 			case SQUARES.C8:
 				MovePiece(SQUARES.A8, SQUARES.D8);
@@ -152,6 +154,7 @@ function MakeMove (move)
 	//Most values are 15, or 1111 in binary (the identity value)
 	GameBoard.castlePerm &= CastlePerm[from];
 	GameBoard.castlePerm &= CastlePerm[to];
+	GameBoard.enPas = SQUARES.NO_SQ;
 	
 	//Update castlePerms
 	HASH_CA();
@@ -172,7 +175,7 @@ function MakeMove (move)
 	if (PiecePawn[GameBoard.pieces[from]] == BOOL.TRUE)
 	{
 		GameBoard.fiftyMove = 0;		//if a pawn move, we also reset fifty-move timer
-		if (move & MFLAGPS)
+		if ((move & MFLAGPS) != 0)
 		{
 			//If pawn starting move, set en passant square	
 			if (side == COLORS.WHITE)
@@ -309,31 +312,6 @@ function TakeMove ()
 		AddPiece(from, PieceCol[PROMOTED(move)] == COLORS.WHITE ? PIECES.wP : PIECES.bP);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

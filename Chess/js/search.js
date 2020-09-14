@@ -12,6 +12,36 @@ var SearchController =
 	thinking: 0				//bool if computer is thinking
 };
 
+//Returns if a position has already occurred
+function IsRepetition ()
+{
+	/*
+	It is inefficient to loop from the first position to now, recall that a pawn move or
+	a capture is a PERMANENT modification to the board, and that is also the criteria to
+	reset the fifty move counter. Thus, we only need to search starting from "fifty move counter"
+	positions ago
+	*/
+	for (let i = GameBoard.hisPly - GameBoard.fiftyMove; i < GameBoard.hisPly - 1; i++)
+	{
+		
+		if (GameBoard.posKey == GameBoard.history[i])
+		{
+			return BOOL.TRUE
+		}
+	}
+	
+	return BOOL.FALSE;
+}
+
+//Checking for a time out (time used to search exceeded time allocated to search)
+function CheckUp()
+{
+	if (($.now() - SearchController.start) > SearchController.time)
+	{	
+		SearchController.stop == BOOL.TRUE;
+	}
+}
+
 /*
 AlphaBeta function, using a NegaMax framework 
 
@@ -29,11 +59,20 @@ function AlphaBeta (alpha, beta, depth)
 		//return static eval
 	}
 	
-	//Special cases: search exceeds depth 64, 50 move rule, repetitions
-	//Check time up
+	//We don't want to call CheckUp every node because it's too intensive and unnecessary
+	//This calls it every 2048 nodes
+	if ((SearchController.nodes & 2047) == 0)
+	{
+		CheckUp();
+	}
+	
 	SearchController.nodes++;
 	
-	//Check rep fifty move rule
+	//Fifty move draw rule (100 because 100 plies = 50 moves)
+	if ((IsRepetition() || GameBoard.fiftyMove >= 100) && GameBoard.ply != 0)	
+	{
+		return 0;
+	}
 	
 	if (GameBoard.ply > MAXDEPTH - 1)
 	{

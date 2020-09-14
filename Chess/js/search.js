@@ -56,7 +56,7 @@ function AlphaBeta (alpha, beta, depth)
 	//Leaf node case - return static eval	
 	if (depth <= 0)
 	{
-		//return static eval
+		EvalPosition();
 	}
 	
 	//We don't want to call CheckUp every node because it's too intensive and unnecessary
@@ -76,7 +76,7 @@ function AlphaBeta (alpha, beta, depth)
 	
 	if (GameBoard.ply > MAXDEPTH - 1)
 	{
-		//return static eval
+		EvalPosition();
 	}
 	
 	let Score = -INFINITE;

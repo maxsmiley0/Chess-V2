@@ -100,18 +100,34 @@ function RAND_32()
 		    Math.floor(Math.random() * 255 + 1));
 }
 
-//Gets SQUARE-64 from SQUARE-120
+//Array that hold the reflection of each square about the x axis
+const ReflectSquares = [
+56	,	57	,	58	,	59	,	60	,	61	,	62	,	63	,
+48	,	49	,	50	,	51	,	52	,	53	,	54	,	55	,
+40	,	41	,	42	,	43	,	44	,	45	,	46	,	47	,
+32	,	33	,	34	,	35	,	36	,	37	,	38	,	39	,
+24	,	25	,	26	,	27	,	28	,	29	,	30	,	31	,
+16	,	17	,	18	,	19	,	20	,	21	,	22	,	23	,
+8	,	9	,	10	,	11	,	12	,	13	,	14	,	15	,
+0	,	1	,	2	,	3	,	4	,	5	,	6	,	7
+];
 
+//Gets SQUARE-64 from SQUARE-120
 function SQ64 (SQ120)
 {
 	return Sq120To64[SQ120];
 }
 
 //Gets SQUARE-120 from SQUARE-64
-
 function SQ120 (SQ64)
 {
 	return Sq64ToSq120[SQ64];
+}
+
+//Maps each square to its corresponding square, mirrored about the x axis (e.g. h1 -> a1)
+function Mirror64 (sq)
+{
+	return ReflectSquares[sq];
 }
 
 /*

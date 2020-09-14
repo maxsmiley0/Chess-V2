@@ -512,6 +512,3 @@ function SqAttacked (sq, side)
 
 
 
-
-
-

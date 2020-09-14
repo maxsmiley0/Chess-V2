@@ -208,7 +208,7 @@ function MakeMove (move)
 	//Ensuring the king is not in check at the end of the move
 	if (SqAttacked(GameBoard.pList[PCEINDEX(Kings[side], 0)], GameBoard.side))
 	{
-		//take move
+		TakeMove();			//takes back a move if the king is in check
 		return BOOL.FALSE;
 	}
 	else 
@@ -217,34 +217,98 @@ function MakeMove (move)
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//Takes back a move
+function TakeMove ()
+{
+	//Going back a move
+	GameBoard.hisPly--;
+	GameBoard.ply--;
+	
+	//Defining these for readability
+	let move = GameBoard.history[GameBoard.hisPly].move;
+	let from = FROMSQ(move);
+	let to = TOSQ(move);
+	
+	//En passant case, for "undo" case
+	if (GameBoard.enPas != PIECES.EMPTY)
+	{
+		HASH_EP();
+	}
+	
+	HASH_CA();
+	
+	//Using history array to restore these values
+	GameBoard.castlePerm = GameBoard.history[GameBoard.hisPly].castlePerm;
+	GameBoard.fiftyMove = GameBoard.history[GameBoard.hisPly].fiftyMove;
+	GameBoard.enPas = GameBoard.history[GameBoard.hisPly].enPas;
+	
+	//En passant case, for actual move now
+	if (GameBoard.enPas != PIECES.EMPTY)
+	{
+		HASH_EP();
+	}
+	
+	HASH_CA();
+	
+	//Swapping side
+	GameBoard.side ^= 1;
+	HASH_SIDE();
+	
+	//Flag cases
+	
+	//En passant case
+	if (MFLAGEP & move)
+	{
+		//If last move was an en passant, we have to add back the pawn
+		if (GameBoard.side == COLORS.WHITE)
+		{
+			AddPiece(to - 10, PIECES.bP);
+		}
+		else 
+		{
+			AddPiece(to + 10, PIECES.wP);
+		}
+	}
+	//Castle case
+	else if (MFLAGCA & move)
+	{
+		//If we castled, we have to move the rook back
+		switch (to)
+		{
+			case SQUARES.C1:
+				MovePiece(SQUARES.D1, SQUARES.A1); 
+				break;
+			case SQUARES.C8: 
+				MovePiece(SQUARES.D8, SQUARES.A8); 
+				break;
+			case SQUARES.G1:
+				MovePiece(SQUARES.F1, SQUARES.H1); 
+				break;
+			case SQUARES.G8: 
+				MovePiece(SQUARES.F8, SQUARES.H8); 
+				break;
+			default: 
+				break;
+		}
+	}
+	
+	//Special cases handled, now we move the piece back, if a capture happened, we need to add that back too
+	
+	MovePiece (to, from);
+	
+	//Replace captured piece, if any
+	if (CAPTURED(move) != PIECES.EMPTY)
+	{
+		AddPiece(to, CAPTURED(move));
+	}
+	
+	//Delete promoted piece, if any
+	if (PROMOTED(move) != PIECES.EMPTY)
+	{
+		ClearPiece(from);
+		AddPiece(from, PieceCol[PROMOTED(move)] == COLORS.WHITE ? PIECES.wP : PIECES.bP);
+	}
+}
 
 
 

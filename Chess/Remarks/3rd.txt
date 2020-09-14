@@ -1,7 +1,9 @@
-Day 3: September 13, 2020 31 - ???
+Day 3: September 13, 2020 31 - 38
 
--made add piece and clear piece but didn't even implement in move piece?
--genius use of bitwise operators
--i had a way harder time distinguishing legal moves from pseudo legal moves (compare times)
--takeback move as opposed to seeing if its not legal? interesting, i wonder if introduction to ponder would see faster calculations
--perf testing is really smart and robust
+This section of the tutorial focused on implementing the MovePiece() function, and handling all of the baggage that comes with that. Because we have multiple data structures representing similar things, we have to be vigilant when changing anything. For example, if we want to add a piece to the board, we have to change the number of pieces of that type on the board, the material of the board, the position of that piece in piece list (to null), etc... I would say that it is a bit easier to follow the logic I used in my c++ chess engine; because I defined everything in terms of classes, all relevant information about a piece was available by its piece object, this was not really a possibility using BFS's method, since pieces are represented by numbers.
+
+BFS's MovePiece function was structured quite logically. It handled any special cases that may have occurred (sensed using the flags), and then moves the piece. One unique aspect of BFS's MovePiece function (I'm not sure whether this is a standard practice) is that the move is made regardless of if the King ends up being in check or not, and if the king ends up being in check, then the move is simply taken back, using the take back function, which utilizes the history table (which I didn't even implement). I spent so much time rigorously defining a legal move, which ended up taking about 10x longer to generate than a pseudo legal move. In hindsight, it would have been way easier (and more efficient) to just do what BFS did.
+
+I was a bit shocked that BFS was able to expand the entire search tree using only the GameBoard object literal with take backs. Every time my engine explored a line, it had to allocate memory for a new board, which is terrible ineffective, not to mention extremely easy to leak memory. 
+
+BFS introduced perft testing, a scheme to ensure correct legal move generation, through a list of FENs and a list preknown leaf nodes as a function of depth. You can just plug in a couple dozen of these, and check to see that your numbers match up with the perft file. While my c++ engine never had any legal move mistakes, I never knew for sure that it could handle some incredibly obscure case poorly, whereas you can be nearly 100% sure that your legal move generation is correct with perft testing.

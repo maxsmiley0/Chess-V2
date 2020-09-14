@@ -1,6 +1,6 @@
-In this folder, I will keep track of the progress I make through Bluefever Software's VICE youtube tutorial series, comparing and contrasting it to the process of making my own engine in c++. I likely won't update this folder with regards to any upgrades or alterations I may make to the engine.
-
 Day One: September 11, 2020. Lessons 1 - 16
+
+In this folder, I will keep track of the progress I make through Bluefever Software's VICE youtube tutorial series, comparing and contrasting it to the process of making my own engine in c++. I likely won't update this folder with regards to any upgrades or alterations I may make to the engine.
 
 From just the first few videos in the series, I can immediately tell that coding a chess engine in JavaScript is stylistically a much better choice than c++, at least for my level. In c++, I spent an immeasurable amount of time dealing with the headache of memory allocation, pointers, and all of the other yucky stuff c++ is infamous for. Additionally, JS is supported in browser, whereas in c++ I had to build an executable if I wanted to distribute it. Ostensibly, a chess engine in c++ should run faster than in JS. However, as my engine was my first experience with chess programming, suffice to say that gaining a few milliseconds per operation did not greatly impact my engine's performance.
 

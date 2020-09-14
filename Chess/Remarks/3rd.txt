@@ -1,3 +1,6 @@
 Day 3: September 13, 2020 31 - ???
 
 -made add piece and clear piece but didn't even implement in move piece?
+-genius use of bitwise operators
+-i had a way harder time distinguishing legal moves from pseudo legal moves (compare times)
+-takeback move as opposed to seeing if its not legal? interesting, i wonder if introduction to ponder would see faster calculations

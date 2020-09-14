@@ -1,21 +1,16 @@
-//Maps a given piece to its "maximum index". Takes in parameter piece name e.g. wP
-function PCEINDEX(pce, pceNum) 
-{
-	return (pce * 10 + pceNum);
-}
-
 var GameBoard = 
 {
 	pieces: new Array(BRD_SQ_NUM),	//pieces in a given game board
 	side: COLORS.WHITE,				//side to move
 	fiftyMove: 0,					//50 move draw rule
 	hisPly: 0,						//Stack of game states / moves
-	ply: 0,							//Number of plies into the search tree	
+	ply: 0,							//Number of plies into the search tree	/ or game??
 	castlePerm: 0,					//Can a given side castle?		
 	enPas: 0,						//En passant
 	material: new Array(2),			//Indexed by side, holds value of material
 	pceNum: new Array(13),			//Indexed by piece, how many of a given piece exists?
 	posKey: 0,						//Maps a board to a key (integer, unique)
+	history: [],						//History array, unfixed size
 	
 	/*
 	moveList stores all of the moves in the search tree, in order
@@ -32,7 +27,7 @@ var GameBoard =
 	
 	moveListStart: new Array(MAXDEPTH),   
 	moveList: new Array(MAXDEPTH * MAXPOSITIONMOVES),	//generated moves
-	moveScores: new Array(MAXDEPTH * MAXPOSITIONMOVES),//scores for generated moves
+	moveScores: new Array(MAXDEPTH * MAXPOSITIONMOVES), //scores for generated moves
 	
 	
 	/*
@@ -50,7 +45,6 @@ var GameBoard =
 	
 	//Making sure pList has enough space
 	pList: new Array(14 * 10)
-	
 };
 
 /*
@@ -61,6 +55,7 @@ it move by move
 The latter method, while efficient, is more prone to error. This function simply checks
 that everything is working as it should be
 */
+
 function CheckBoard() 
 {   
  	//Going through all members of GameBoard and ensuring everything checks out

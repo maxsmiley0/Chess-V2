@@ -187,6 +187,30 @@ const LoopNonSlideIndex = [0, 3]; //stores where se start looping through LoopNo
 const LoopSlidePce =   [PIECES.wB, PIECES.wR, PIECES.wQ, 0, PIECES.bB, PIECES.bR, PIECES.bQ, 0];
 const LoopSlideIndex = [0, 4];
 
+//Maps a given piece to its "maximum index". Takes in parameter piece name e.g. wP
+function PCEINDEX(pce, pceNum) 
+{
+	return (pce * 10 + pceNum);
+}
+
+const Kings = [PIECES.wK, PIECES.bK];
+//We bitwise & the CastlePerm, where the entry is the board square. For example, bitwise
+//&'ing 1111 (all sides can castle) with (1100) revokes the castling privileges for black
+var CastlePerm = [
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 13, 15, 15, 15, 12, 15, 15, 14, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15,  7, 15, 15, 15,  3, 15, 15, 11, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15
+];
+
 /*
 What do we store about a move?
 From square - 64 squares, so 7 bits

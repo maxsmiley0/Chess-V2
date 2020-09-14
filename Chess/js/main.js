@@ -4,6 +4,7 @@ $(function()
 	console.log("Main Init Called");
 	ParseFen(START_FEN);
 	PrintBoard();
+	//SearchPosition();
 });
 
 function InitFileRanksBrd()

@@ -1,0 +1,5 @@
+Day 4: September 14, 2020 39 - ???
+
+-Search before eval?
+-seanet brucemo?
+-intro negamax as opposed to dual minimax, smart (inverts each its)

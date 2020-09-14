@@ -50,6 +50,8 @@ TRUE: 1, FALSE: 0
 const MAXGAMEMOVES = 2048;		//Tentative upper bound on game moves
 const MAXPOSITIONMOVES = 256;	//Upper bound on possible moves in a position
 const MAXDEPTH = 64;			//Upper bound on max depth of plies searched
+const INFINITE = 30000;			//The eval will never exceed this number
+const MATE = 29000;				//Needs to be far above eval, yet below infinite
 
 /*
 Why are we using an array of 120 (12 x 10) as opposed to an array of 64 (8 x 8)? 

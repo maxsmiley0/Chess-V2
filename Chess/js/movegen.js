@@ -385,8 +385,178 @@ function GenerateMoves()
 	}
 }
 
-
-
+//Generates captures, to be used in the Quiescence Search, filling the GameBoard arrays of moveList and moveListStart
+function GenerateCaptures()
+{
+	//Simply updating the next moveListStart to start at the current moveList, before we
+	//add in the moves for the current ply
+	GameBoard.moveListStart[GameBoard.ply + 1] = GameBoard.moveListStart[GameBoard.ply];
+	
+	let pceType;
+	let sq;
+	let t_sq;
+	let pceIndex;
+	let pce;
+	let dir;
+	
+	//Pawns have direction, so we have to specify the color
+	if (GameBoard.side == COLORS.WHITE)
+	{
+		pceType = PIECES.wP;
+		
+		//Looping through the number of white pawns
+		for (let pceNum = 0; pceNum < GameBoard.pceNum[pceType]; pceNum++)
+		{
+			//Setting square to the square that that pawn resides on
+			sq = GameBoard.pList[PCEINDEX(pceType, pceNum)];
+			
+			//Capture cases
+			if (SQOFFBOARD(sq + 9) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 9]] == COLORS.BLACK)
+			{
+				AddWhitePawnCaptureMove(sq, sq + 9, GameBoard.pieces[sq + 9]);
+			}
+			
+			if (SQOFFBOARD(sq + 11) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 11]] == COLORS.BLACK)
+			{
+				AddWhitePawnCaptureMove(sq, sq + 11, GameBoard.pieces[sq + 11]);
+			}
+			
+			//En passant cases
+			if (GameBoard.enPas != SQUARES.NO_SQ)
+			{
+				if (sq + 9 == GameBoard.enPas)
+				{
+					AddEnPassantMove(MOVE(sq, sq + 9, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
+				}
+			}
+			
+			if (GameBoard.enPas != SQUARES.NO_SQ)
+			{
+				if (sq + 11 == GameBoard.enPas)
+				{
+					AddEnPassantMove(MOVE(sq, sq + 11, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
+				}
+			}
+		}
+	}
+	else 
+	{
+		pceType = PIECES.bP;
+		
+		//Looping through the number of white pawns
+		for (let pceNum = 0; pceNum < GameBoard.pceNum[pceType]; pceNum++)
+		{
+			//Setting square to the square that that pawn resides on
+			sq = GameBoard.pList[PCEINDEX(pceType, pceNum)];
+			
+			//Capture cases
+			if (SQOFFBOARD(sq - 9) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 9]] == COLORS.WHITE)
+			{
+				AddBlackPawnCaptureMove(sq, sq - 9, GameBoard.pieces[sq - 9]);
+			}
+			
+			if (SQOFFBOARD(sq - 11) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 11]] == COLORS.WHITE)
+			{
+				AddBlackPawnCaptureMove(sq, sq - 11, GameBoard.pieces[sq - 11]);
+			}
+			
+			//En passant cases
+			if (GameBoard.enPas != SQUARES.NOSQ)
+			{
+				if (sq - 9 == GameBoard.enPas)
+				{
+					AddEnPassantMove(MOVE(sq, sq - 9, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
+				}
+			}
+			
+			if (GameBoard.enPas != SQUARES.NOSQ)
+			{
+				if (sq - 11 == GameBoard.enPas)
+				{
+					AddEnPassantMove(MOVE(sq, sq - 11, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
+				}
+			}
+		}
+	}
+	
+	//Non-Sliding pieces implementation (king, knight)
+	
+	pceIndex = LoopNonSlideIndex[GameBoard.side];
+	pce = LoopNonSlidePce[pceIndex++];
+	
+	//Looping through all non-sliding pieces
+	while (pce != 0)
+	{
+		//Looping through all pieces of this type / color
+		for (let pceNum = 0; pceNum < GameBoard.pceNum[pce]; pceNum++)
+		{
+			sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+			//Loop through all moves
+			for (let i = 0; i < DirNum[pce]; i++)
+			{
+				dir = PceDir[pce][i];
+				//target square
+				t_sq = sq + dir;
+				//break out of the loop if target square is off board
+				if (SQOFFBOARD(t_sq) == BOOL.TRUE)
+				{
+					continue;
+				}
+				
+				if (GameBoard.pieces[t_sq] != PIECES.EMPTY)
+				{
+					if (PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side)
+					{
+						AddCaptureMove(MOVE(sq, t_sq, GameBoard.pieces[t_sq]), PIECES.EMPTY, NOMOVE);
+					}
+				}
+			}
+		}
+		pce = LoopNonSlidePce[pceIndex++];	//set piece to the next piece in the non-sliding set
+	}
+	
+	//Sliding pieces implementation (bishop, rook, queen)
+	pceIndex = LoopSlideIndex[GameBoard.side];
+	pce = LoopSlidePce[pceIndex++];
+	
+	//Looping through all of the sliding pieces
+	while (pce != 0)
+	{
+		//Looping through all pieces of this type / color
+		for (let pceNum = 0; pceNum < GameBoard.pceNum[pce]; pceNum++)
+		{
+			sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+			
+			//Loop through all moves
+			for (let i = 0; i < DirNum[pce]; i++)
+			{
+				dir = PceDir[pce][i];
+				//target square
+				t_sq = sq + dir;
+				//loop until piece goes off board
+				
+				while (SQOFFBOARD(t_sq) == BOOL.FALSE)
+				{
+					//encounters a piece	
+					if (GameBoard.pieces[t_sq] != PIECES.EMPTY)
+					{
+						//opposite side induces a capture, same side means we break from the loop
+						if (PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side)
+						{
+							AddCaptureMove(MOVE(sq, t_sq, GameBoard.pieces[t_sq]), PIECES.EMPTY, NOMOVE);
+						}
+						break;
+					}
+					else 
+					{
+						t_sq += dir;
+					}
+				}
+			}
+		}
+		pce = LoopSlidePce[pceIndex++];
+	}
+}
 
 
 

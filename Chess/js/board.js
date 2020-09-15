@@ -264,8 +264,6 @@ function UpdateListsMaterial ()
 			GameBoard.pceNum[piece]++;								//add piece to board
 		}							
 	}
-	
-	PrintPieceLists();
 }
 
 function ResetBoard ()
@@ -395,7 +393,6 @@ function ParseFen (fen)
 	
 	GameBoard.posKey = GeneratePosKey();
 	UpdateListsMaterial();
-	PrintSqAttacked();
 }
 
 function PrintSqAttacked ()

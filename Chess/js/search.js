@@ -52,6 +52,107 @@ function CheckUp()
 	}
 }
 
+//Searches only captures until all nodes have been exhausted
+function Quiescence (alpha, beta)
+{
+	//We don't want to call CheckUp every node because it's too intensive and unnecessary
+	//This calls it every 2048 nodes
+	if ((SearchController.nodes & 2047) == 0)
+	{
+		CheckUp();
+	}
+	
+	SearchController.nodes++;
+	
+	//Fifty move draw rule (100 because 100 plies = 50 moves)
+	if ((IsRepetition() || GameBoard.fiftyMove >= 100) && GameBoard.ply != 0)	
+	{
+		return 0;
+	}
+	
+	if (GameBoard.ply > MAXDEPTH - 1)
+	{
+		return EvalPosition();
+	}
+	
+	let score = EvalPosition();
+	
+	/*
+	Standing pat: a method to quickly improve alpha beta cutoffs without loss of generality
+	Logic is as follows: we assume the opponent will play the strongest move, so beta
+	(the score our opponent is guaranteed) cannot be higher than the static evaluation
+	*/
+	if (score >= beta)
+	{
+		return beta;
+	}
+	if (score >= alpha)
+	{
+		alpha = score;
+	}
+	
+	GenerateCaptures();
+	
+	let Legal = 0;				//How many legal moves have we made?
+	let OldAlpha = alpha;		//Check to see if new best move is found (and store in PV table)
+	let BestMove = NOMOVE;
+	let Move = NOMOVE;
+	
+	/*
+	Get PV Move (because we want to search best moves first)
+	Order PV Move (set high move ordering score)
+	*/
+	
+	//Loop through our moves
+	for (let MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; MoveNum++)
+	{
+		//pick our next best move
+		
+		Move = GameBoard.moveList[MoveNum];
+		//If illegal move, ignore
+		if (MakeMove(Move) == BOOL.FALSE)
+		{
+			continue;
+		}
+		
+		Legal++;
+		Score = -Quiescence(-beta, -alpha);
+		TakeMove();
+		
+		if (SearchController.stop == BOOL.TRUE)
+		{
+			return 0;
+		}
+		
+		//We havent run out of time
+		
+		if (Score > alpha)
+		{
+			if (Score >= beta)
+			{
+				//Just a little statistics collection, gives an idea of our move ordering
+				if (Legal == 1)
+				{
+					SearchController.fhf++;
+				}
+				SearchController.fh++;
+				
+				return beta;	//beta cutoff
+			}
+			alpha = Score;
+			BestMove = Move;
+		}
+	}
+	
+	//New best move, store it in the PvTable
+	if (alpha != OldAlpha)
+	{
+		StorePvMove(BestMove);
+	}
+	
+	return alpha;
+}
+
 /*
 AlphaBeta function, using a NegaMax framework 
 
@@ -62,13 +163,11 @@ What is the general layout for move ordering?
 4. Quiet moves ordered by values from the history heuristic
 */
 function AlphaBeta (alpha, beta, depth)
-{
-	SearchController.nodes++;
-	
+{	
 	//Leaf node case - return static eval	
 	if (depth <= 0)
 	{
-		return EvalPosition();
+		return Quiescence(alpha, beta);
 	}
 	
 	//We don't want to call CheckUp every node because it's too intensive and unnecessary
@@ -77,6 +176,8 @@ function AlphaBeta (alpha, beta, depth)
 	{
 		CheckUp();
 	}
+	
+	SearchController.nodes++;
 	
 	//Fifty move draw rule (100 because 100 plies = 50 moves)
 	if ((IsRepetition() || GameBoard.fiftyMove >= 100) && GameBoard.ply != 0)	

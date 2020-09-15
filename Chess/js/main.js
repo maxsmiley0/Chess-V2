@@ -107,6 +107,7 @@ function init()
 	InitHashKeys();					//Initializing position keys
 	InitSq120ToSq64();				//Initializing Sq64ToSq120 and Sq120ToSq64 arrays
 	InitBoardVars();				//Initializing board history array
+	InitMvvLva();					//Initializing MvvLva array
 }
 
 

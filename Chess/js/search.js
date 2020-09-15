@@ -11,7 +11,7 @@ var SearchController =
 	best: 0,				//stores best move found
 	thinking: 0				//bool if computer is thinking
 };
-/*
+
 //Picks next move, based on its history heuristic
 //can we use a better sorting algorithm
 function PickNextMove (MoveNum)
@@ -30,12 +30,18 @@ function PickNextMove (MoveNum)
 	
 	if (bestNum != MoveNum)
 	{
+		//Switching move scores
 		let temp = GameBoard.moveScores[MoveNum];
 		GameBoard.moveScores[MoveNum] = GameBoard.move;
-		GameBoard.moveScores[MoveNum] = GameBoard.move;
+		GameBoard.moveScores[bestNum] = temp;
+		
+		//Switching move positions
+		temp = GameBoard.moveList[MoveNum];
+		GameBoard.moveList[MoveNum] = GameBoard.moveList[bestNum];
+		GameBoard.moveList[bestNum] = temp;
 	}
 }
-*/
+
 //Simply clears PvTable
 function ClearPvTable ()
 {
@@ -130,7 +136,7 @@ function Quiescence (alpha, beta)
 	//Loop through our moves
 	for (let MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; MoveNum++)
 	{
-		//pick our next best move
+		PickNextMove(MoveNum);
 		
 		Move = GameBoard.moveList[MoveNum];
 		//If illegal move, ignore
@@ -186,6 +192,7 @@ What is the general layout for move ordering?
 3. Killer moves
 4. Quiet moves ordered by values from the history heuristic
 */
+
 function AlphaBeta (alpha, beta, depth)
 {	
 	//Leaf node case - return static eval	
@@ -240,7 +247,7 @@ function AlphaBeta (alpha, beta, depth)
 	//Loop through our moves
 	for (let MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; MoveNum++)
 	{
-		//pick our next best move
+		PickNextMove(MoveNum);
 		
 		Move = GameBoard.moveList[MoveNum];
 		//If illegal move, ignore
@@ -307,6 +314,7 @@ function AlphaBeta (alpha, beta, depth)
 	return alpha;
 }
 
+
 /*
 Clears our history heuristic (how we order quiet moves through alpha cutoffs) 
 Clears killer move heuristic (how we order moves through beta cutoffs)
@@ -351,7 +359,7 @@ function SearchPosition ()
 	ClearForSearch();
 	
 	//Iterative deepening framework
-	for (let currentDepth = 1; currentDepth <= /*SearchController.depth*/ 5; currentDepth++)
+	for (let currentDepth = 1; currentDepth <= /*SearchController.depth*/ 4; currentDepth++)
 	{
 		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 		
@@ -368,6 +376,12 @@ function SearchPosition ()
 		for (let i = 0; i < PvNum; i++)
 		{
 			line += PrMove(GameBoard.PvArray[i]) + ' ';
+		}
+		
+		//Prints move ordering
+		if (currentDepth != 1)
+		{
+			line += ` Ordering: ${((SearchController.fhf/SearchController.fh)*100).toFixed(2)}%`;
 		}
 		
 		console.log(line);

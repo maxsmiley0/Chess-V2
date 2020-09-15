@@ -1,3 +1,20 @@
+const MvvLvaValue = [0, 100, 200, 300, 400, 500, 600, 100, 200, 300, 400, 500, 600];
+const MvvLvaScores = new Array(14 * 14); //indexed by piece attacker / victim type
+
+//Uses principal of Most Valuable Victim, Least Valuable Attacker (MVV LVA)
+function InitMvvLva ()
+{
+	for (let Attacker = PIECES.wP; Attacker <= PIECES.bK; Attacker++)
+	{
+		for (let Victim = PIECES.wP; Victim <= PIECES.bK; Victim++)
+		{
+			//This orders the MvvLva score by most valuable victim first, and within that ordering,
+			//the east valuable attacker first
+			MvvLvaScores[Victim * 14 + Attacker] = MvvLvaValue[Victim] + 6 - (MvvLvaValue[Attacker]/100);
+		}
+	}
+}
+
 //Returns true or false, if a move exists or not
 function MoveExists (move)
 {
@@ -37,14 +54,17 @@ function AddCaptureMove (move)
 {
 	//Adding the move to its appropriate spot in the GameBoard moveListStart array
 	//Also increasing moveListStart for the given ply, because one spot has been filled
+	//priority is the MvvLva weight plus a million, so it gets evaluated before killer / history heuristic
+	let priority = MvvLvaScores[CAPTURED(move) * 14 + GameBoard.pieces[FROMSQ(move)]] + 1000000;
 	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
-	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 0;
+	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = priority;
 }
 
 function AddQuietMove (move)
 {
 	//Adding the move to its appropriate spot in the GameBoard moveListStart array
 	//Also increasing moveListStart for the given ply, because one spot has been filled
+	
 	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
 	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 0;
 }
@@ -54,7 +74,7 @@ function AddEnPassantMove (move)
 	//Adding the move to its appropriate spot in the GameBoard moveListStart array
 	//Also increasing moveListStart for the given ply, because one spot has been filled
 	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
-	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 0;
+	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 105 + 1000000;
 }
 
 //Pawn related captures, we need a separate function to handle promotions
@@ -255,7 +275,7 @@ function GenerateMoves()
 			}
 			
 			//En passant cases
-			if (GameBoard.enPas != SQUARES.NOSQ)
+			if (GameBoard.enPas != SQUARES.NO_SQ)
 			{
 				if (sq - 9 == GameBoard.enPas)
 				{
@@ -263,7 +283,7 @@ function GenerateMoves()
 				}
 			}
 			
-			if (GameBoard.enPas != SQUARES.NOSQ)
+			if (GameBoard.enPas != SQUARES.NO_SQ)
 			{
 				if (sq - 11 == GameBoard.enPas)
 				{
@@ -461,7 +481,7 @@ function GenerateCaptures()
 			}
 			
 			//En passant cases
-			if (GameBoard.enPas != SQUARES.NOSQ)
+			if (GameBoard.enPas != SQUARES.NO_SQ)
 			{
 				if (sq - 9 == GameBoard.enPas)
 				{
@@ -469,7 +489,7 @@ function GenerateCaptures()
 				}
 			}
 			
-			if (GameBoard.enPas != SQUARES.NOSQ)
+			if (GameBoard.enPas != SQUARES.NO_SQ)
 			{
 				if (sq - 11 == GameBoard.enPas)
 				{

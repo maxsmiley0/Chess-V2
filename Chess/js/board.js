@@ -57,7 +57,15 @@ var GameBoard =
 	PvArray: new Array(MAXDEPTH),		//stores the principal variation line
 	
 	searchHistory: new Array(14 * BRD_SQ_NUM),	//orders piece moves by alpha cutoffs
-	searchKillers: new Array(3 * MAXDEPTH)		//orders killer moves by beta cutoffs
+	
+	/*
+	orders killer moves by beta cutoffs, indexed by depth (e.g. exists some killer moves
+	for each depth)
+	The reason we have more than MAXDEPTH entries is to account for the top two/three moves 
+	that produce the largest beta cutoff
+	*/
+	
+	searchKillers: new Array(3 * MAXDEPTH)		
 };
 
 /*

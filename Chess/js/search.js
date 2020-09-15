@@ -239,10 +239,19 @@ function AlphaBeta (alpha, beta, depth)
 	let BestMove = NOMOVE;
 	let Move = NOMOVE;
 	
-	/*
-	Get PV Move (because we want to search best moves first)
-	Order PV Move (set high move ordering score)
-	*/
+	//Order PV Move (set high move ordering score)
+	let PvMove = ProbePvTable();
+	if (PvMove != NOMOVE)
+	{
+		for (let MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; MoveNum++)
+		{
+			if (GameBoard.moveList[MoveNum] == PvMove)
+			{
+				GameBoard.moveScores[MoveNum] = 2000000;
+				break;
+			}
+		}
+	}
 	
 	//Loop through our moves
 	for (let MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; MoveNum++)
@@ -278,13 +287,25 @@ function AlphaBeta (alpha, beta, depth)
 				}
 				SearchController.fh++;
 				
-				//update killer moves
+				//Killer heuristic, ordering quiet moves through beta cutoffs
+				if ((Move & MFLAGCAP) == 0)
+				{
+					//We only store the 2 most recent killer moves, this shifts the previous one to the old slot
+					GameBoard.searchKillers[MAXDEPTH + GameBoard.ply] = GameBoard.searchKillers[GameBoard.ply];
+					GameBoard.searchKillers[GameBoard.ply] = Move;
+				}
 				
 				return beta;	//beta cutoff
 			}
+			
+			//History heuristic, ordering quiet moves through alpha
+			if ((MOVE & MFLAGCAP) == 0)
+			{
+				//Rewarding nodes that have cutoffs near root
+				GameBoard.searchHistory[GameBoard.pieces[FROMSQ(Move)] * BRD_SQ_NUM + TOSQ(Move)] += (depth * depth);
+			}
 			alpha = Score;
 			BestMove = Move;
-			//Update history table
 		}
 	}
 	
@@ -323,13 +344,13 @@ To be called before we start our search
 */
 function ClearForSearch ()
 {
-	//indexed by piece and square
+	//history heuristic, indexed by piece and square
 	for (let i = 0; i < 14 * BRD_SQ_NUM; i++)
 	{
 		GameBoard.searchHistory[i] = 0;
 	}
 	
-	//indexed by ply, we store 3 of them per ply
+	//killer heuristic, indexed by ply, we store 2 of them per ply
 	for (let i = 0; i < 3 * MAXDEPTH; i++)
 	{
 		GameBoard.searchKillers[i] = 0;
@@ -359,7 +380,7 @@ function SearchPosition ()
 	ClearForSearch();
 	
 	//Iterative deepening framework
-	for (let currentDepth = 1; currentDepth <= /*SearchController.depth*/ 4; currentDepth++)
+	for (let currentDepth = 1; currentDepth <= /*SearchController.depth*/ 7; currentDepth++)
 	{
 		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 		

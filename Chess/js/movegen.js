@@ -64,9 +64,27 @@ function AddQuietMove (move)
 {
 	//Adding the move to its appropriate spot in the GameBoard moveListStart array
 	//Also increasing moveListStart for the given ply, because one spot has been filled
-	
 	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
-	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 0;
+	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] = 0;
+	
+	if (move == GameBoard.searchKillers[GameBoard.ply])
+	{
+		//Killer 1 hit, set priority to above all else, but below MvvLva
+		GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] = 900000;
+	}
+	else if (move == GameBoard.searchKillers[GameBoard.ply + MAXDEPTH])
+	{
+		//Killer 2 hit, set priority to above all else, but below MvvLva and below killer 1
+		GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] = 800000;
+	}
+	else 
+	{
+		//Quiet move, not a killer move, order by history heuristic
+		GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] = 
+		GameBoard.searchHistory[GameBoard.pieces[FROMSQ(move)] * BRD_SQ_NUM + TOSQ(move)];
+	}
+	
+	GameBoard.moveListStart[GameBoard.ply + 1]++;
 }
 
 function AddEnPassantMove (move)

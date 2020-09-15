@@ -1,3 +1,4 @@
+//Piece Square Tables
 const PawnTable = [
 0	,	0	,	0	,	0	,	0	,	0	,	0	,	0	,
 10	,	10	,	0	,	-10	,	-10	,	0	,	10	,	10	,
@@ -88,7 +89,7 @@ function EvalPosition ()
 	for (let pceNum = 0; pceNum < GameBoard.pceNum[pce]; pceNum++)
 	{
 		sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-		score += RookTable[Mirror64(SQ64(sq))];
+		score += RookTable[SQ64(sq)];
 	}
 	
 	pce = PIECES.bP;
@@ -127,6 +128,8 @@ function EvalPosition ()
 		score -= RookTable[Mirror64(SQ64(sq))];
 	}
 	
+	//Evaluating bishop pair bonus
+	
 	if (GameBoard.pceNum[PIECES.wB] >= 2)
 	{
 		score += BishopPair;
@@ -138,39 +141,3 @@ function EvalPosition ()
 	
 	return (GameBoard.side == COLORS.WHITE ? score: -score);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

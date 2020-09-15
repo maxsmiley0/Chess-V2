@@ -233,7 +233,7 @@ function TakeMove ()
 	let to = TOSQ(move);
 	
 	//En passant case, for "undo" case
-	if (GameBoard.enPas != PIECES.EMPTY)
+	if (GameBoard.enPas != SQUARES.NO_SQ)
 	{
 		HASH_EP();
 	}
@@ -246,7 +246,7 @@ function TakeMove ()
 	GameBoard.enPas = GameBoard.history[GameBoard.hisPly].enPas;
 	
 	//En passant case, for actual move now
-	if (GameBoard.enPas != PIECES.EMPTY)
+	if (GameBoard.enPas != SQUARES.NO_SQ)
 	{
 		HASH_EP();
 	}
@@ -260,7 +260,7 @@ function TakeMove ()
 	//Flag cases
 	
 	//En passant case
-	if (MFLAGEP & move)
+	if ((MFLAGEP & move) != 0)
 	{
 		//If last move was an en passant, we have to add back the pawn
 		if (GameBoard.side == COLORS.WHITE)
@@ -273,7 +273,7 @@ function TakeMove ()
 		}
 	}
 	//Castle case
-	else if (MFLAGCA & move)
+	else if ((MFLAGCA & move) != 0)
 	{
 		//If we castled, we have to move the rook back
 		switch (to)

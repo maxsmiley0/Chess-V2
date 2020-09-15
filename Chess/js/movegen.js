@@ -1,3 +1,31 @@
+//Returns true or false, if a move exists or not
+function MoveExists (move)
+{
+	GenerateMoves();
+	
+	let moveFound = NOMOVE;
+	//Looping through legal moves
+	for (let i = GameBoard.moveListStart[GameBoard.ply]; i < GameBoard.moveListStart[GameBoard.ply + 1]; i++)
+	{
+		moveFound = GameBoard.moveList[i];
+		//If move is not legal, continue
+		if (MakeMove(moveFound) == BOOL.FALSE)
+		{
+			continue;
+		}
+		//If move was legal, take it back and return true if it is the move we're interested in
+		else 
+		{
+			TakeMove();
+			if (move == moveFound)
+			{
+				return BOOL.TRUE;
+			}
+		}
+	}
+	return BOOL.FALSE;
+}
+
 //Generates the 25-bit move number given from, to, captured, promoted, and flag
 function MOVE(from, to, captured, promoted, flag)
 {
@@ -147,7 +175,7 @@ function GenerateMoves()
 			}
 			
 			//En passant cases
-			if (GameBoard.enPas != SQUARES.NOSQ)
+			if (GameBoard.enPas != SQUARES.NO_SQ)
 			{
 				if (sq + 9 == GameBoard.enPas)
 				{
@@ -155,7 +183,7 @@ function GenerateMoves()
 				}
 			}
 			
-			if (GameBoard.enPas != SQUARES.NOSQ)
+			if (GameBoard.enPas != SQUARES.NO_SQ)
 			{
 				if (sq + 11 == GameBoard.enPas)
 				{

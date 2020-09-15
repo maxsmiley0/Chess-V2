@@ -63,10 +63,12 @@ What is the general layout for move ordering?
 */
 function AlphaBeta (alpha, beta, depth)
 {
+	SearchController.nodes++;
+	
 	//Leaf node case - return static eval	
 	if (depth <= 0)
 	{
-		EvalPosition();
+		return EvalPosition();
 	}
 	
 	//We don't want to call CheckUp every node because it's too intensive and unnecessary
@@ -76,8 +78,6 @@ function AlphaBeta (alpha, beta, depth)
 		CheckUp();
 	}
 	
-	SearchController.nodes++;
-	
 	//Fifty move draw rule (100 because 100 plies = 50 moves)
 	if ((IsRepetition() || GameBoard.fiftyMove >= 100) && GameBoard.ply != 0)	
 	{
@@ -86,7 +86,7 @@ function AlphaBeta (alpha, beta, depth)
 	
 	if (GameBoard.ply > MAXDEPTH - 1)
 	{
-		EvalPosition();
+		return EvalPosition();
 	}
 	
 	let InCheck = SqAttacked(GameBoard.pList[PCEINDEX(Kings[GameBoard.side], 0)], GameBoard.side^1);
@@ -101,8 +101,6 @@ function AlphaBeta (alpha, beta, depth)
 	let Score = -INFINITE;
 	
 	GenerateMoves();
-	
-	PrintMoveList();
 	
 	let Legal = 0;				//How many legal moves have we made?
 	let OldAlpha = alpha;		//Check to see if new best move is found (and store in PV table)
@@ -153,7 +151,7 @@ function AlphaBeta (alpha, beta, depth)
 				return beta;	//beta cutoff
 			}
 			alpha = Score;
-			BestMove = move;
+			BestMove = Move;
 			//Update history table
 		}
 	}
@@ -216,47 +214,43 @@ function ClearForSearch ()
 	
 }
 
+
 //Called to get a best move for the current position at the allocated depth / move time
 function SearchPosition ()
 {
 	let bestMove = NOMOVE;
 	let bestScore = -INFINITE;
+	let line;
+	let PvNum;		//number of moves in principal variation line
 	
 	ClearForSearch();
 	
 	//Iterative deepening framework
-	for (let currentDepth = 1; currentDepth <= SearchController.depth; currentDepth++)
+	for (let currentDepth = 1; currentDepth <= /*SearchController.depth*/ 5; currentDepth++)
 	{
-		//Call ALPHABETA
+		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 		
 		if (SearchController.stop == BOOL.TRUE)
 		{
 			break;
 		}
+		
+		bestMove = ProbePvTable();
+		line = `D: ${currentDepth} Best ${PrMove(bestMove)} Score ${bestScore} Nodes ${SearchController.nodes}`;
+		PvNum = GetPvLine(currentDepth);
+		line += " Pv: ";
+		
+		for (let i = 0; i < PvNum; i++)
+		{
+			line += PrMove(GameBoard.PvArray[i]) + ' ';
+		}
+		
+		console.log(line);
 	}
 	
 	SearchController.best = bestMove;
 	SearchController.thinking = BOOL.FALSE;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

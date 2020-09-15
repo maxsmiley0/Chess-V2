@@ -4,7 +4,6 @@ $(function()
 	console.log("Main Init Called");
 	ParseFen(START_FEN);
 	PrintBoard();
-	//SearchPosition();
 });
 
 function InitFileRanksBrd()
@@ -46,16 +45,22 @@ function InitHashKeys ()
 }
 
 //Initializes Sq120ToSq64 and Sq64ToSq120
+
 function InitSq120ToSq64 ()
 {
-	//Array w/ 120 elements should be filled
-	for (let i = 0; i < Sq120ToSq64.length; i++)
+	//Filling array 120 w/ placeholder values
+	for (let i = 0; i < BRD_SQ_NUM; i++)
 	{
-		Sq120ToSq64[i] = SQUARES.OFFBOARD
+		Sq120ToSq64[i] = SQUARES.OFFBOARD;
+	}
+	//Filling array 64 w/ placeholder values
+	for (let i = 0; i < 64; i++)
+	{
+		Sq120ToSq64[i] = SQUARES.OFFBOARD;
 	}
 	
 	let sq64 = 0;
-	
+	//Filling them with their actual values
 	for (let rank = RANKS.RANK_1; rank < RANKS.RANK_NONE; rank++)
 	{
 		for (let file = FILES.FILE_A; file < FILES.FILE_NONE; file++)
@@ -63,7 +68,7 @@ function InitSq120ToSq64 ()
 			let sq = FR2SQ(file, rank);
 			
 			Sq64ToSq120[sq64] = sq;
-			Sq120ToSq64[sq] = sq;
+			Sq120ToSq64[sq] = sq64;
 			sq64++;
 		}
 	}

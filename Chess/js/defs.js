@@ -102,6 +102,7 @@ function RAND_32()
 }
 
 //Array that hold the reflection of each square about the x axis
+
 const ReflectSquares = [
 56	,	57	,	58	,	59	,	60	,	61	,	62	,	63	,
 48	,	49	,	50	,	51	,	52	,	53	,	54	,	55	,
@@ -116,7 +117,7 @@ const ReflectSquares = [
 //Gets SQUARE-64 from SQUARE-120
 function SQ64 (SQ120)
 {
-	return Sq120To64[SQ120];
+	return Sq120ToSq64[SQ120];
 }
 
 //Gets SQUARE-120 from SQUARE-64

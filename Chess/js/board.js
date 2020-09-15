@@ -57,7 +57,7 @@ var GameBoard =
 	PvArray: new Array(MAXDEPTH),		//stores the principal variation line
 	
 	searchHistory: new Array(14 * BRD_SQ_NUM),	//orders piece moves by alpha cutoffs
-	searchKiller: new Array(3 * MAXDEPTH)		//orders killer moves by beta cutoffs
+	searchKillers: new Array(3 * MAXDEPTH)		//orders killer moves by beta cutoffs
 };
 
 /*

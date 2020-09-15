@@ -11,7 +11,31 @@ var SearchController =
 	best: 0,				//stores best move found
 	thinking: 0				//bool if computer is thinking
 };
-
+/*
+//Picks next move, based on its history heuristic
+//can we use a better sorting algorithm
+function PickNextMove (MoveNum)
+{
+	let bestScore = -1;	
+	let bestNum = MoveNum;		//stores the best move (as a number)
+	
+	for (let i = MoveNum; i < GameBoard.moveListStart[GameBoard.ply + 1]; i++)
+	{
+		if (GameBoard.moveScores[i] > bestScore)
+		{
+			bestScore = GameBoard.moveScores[i];
+			bestNum = i;
+		}
+	}
+	
+	if (bestNum != MoveNum)
+	{
+		let temp = GameBoard.moveScores[MoveNum];
+		GameBoard.moveScores[MoveNum] = GameBoard.move;
+		GameBoard.moveScores[MoveNum] = GameBoard.move;
+	}
+}
+*/
 //Simply clears PvTable
 function ClearPvTable ()
 {

@@ -380,7 +380,7 @@ function SearchPosition ()
 	ClearForSearch();
 	
 	//Iterative deepening framework
-	for (let currentDepth = 1; currentDepth <= /*SearchController.depth*/ 7; currentDepth++)
+	for (let currentDepth = 1; currentDepth <= /*SearchController.depth*/ 5; currentDepth++)
 	{
 		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 		

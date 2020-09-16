@@ -32,17 +32,10 @@ function SetInitialBoardPieces ()
 		let sq120 = SQ120(sq);
 		let pce = GameBoard.pieces[sq120]
 		
-		let file = FilesBrd[sq120];
-		let rank = RanksBrd[sq120];
-		
+		//Add the piece to the square, if valid
 		if (pce >= PIECES.wP && pce <= PIECES.bK)
 		{
-			let rankName = `rank${rank + 1}`;
-			let fileName = `file${file + 1}`;
-			let pieceFileName = "images/" + SideChar[PieceCol[pce]] + PceChar[pce].toUpperCase() + ".png";
-			let imageString = "<image src=\"" + pieceFileName + "\" class=\"Piece " + rankName + " " + fileName + "\"/>";
-			//Adds these divs to the board, a give piece with a type / color
-			$("#Board").append(imageString);
+			AddGUIPiece(sq120, pce);
 		}
 	}
 }
@@ -51,13 +44,12 @@ function SetInitialBoardPieces ()
 function DeSelectSq (sq)
 {
 	//looping through each square object
-	$(".Square").each(function(i)
+	$(".Square").each(function(i) 
 	{
-		//If a square is on a given file and rank
-		if ((RanksBrd[sq] == 7 - Math.round($(this).position().top / 60)) && 
-			 FilesBrd[sq] == Math.round($(this).position().left / 60))
+		//If a square is on a given rank / file
+		if (PieceIsOnSq(sq, $(this).position().top, $(this).position().left) == BOOL.TRUE)
 		{
-			//Remove the html class "SqSelected"
+			//Add the html class "SqSelected"
 			$(this).removeClass("SqSelected");
 		}
 	});
@@ -69,9 +61,8 @@ function SetSqSelected (sq)
 	//looping through each square object
 	$(".Square").each(function(i) 
 	{
-		//If square is on a given file and rank
-		if ((RanksBrd[sq] == 7 - Math.round($(this).position().top / 60)) && 
-			FilesBrd[sq] == Math.round($(this).position().left / 60))
+		//If a square is on a given rank / file
+		if (PieceIsOnSq(sq, $(this).position().top, $(this).position().left) == BOOL.TRUE)
 		{
 			//Add the html class "SqSelected"
 			$(this).addClass("SqSelected");
@@ -145,6 +136,15 @@ function MakeUserMove ()
 	{
 		console.log(`User Move: ${PrSq(UserMove.from)} ${PrSq(UserMove.to)}`);
 		
+		//move
+		let parsed = ParseMove(UserMove.from, UserMove.to);
+		
+		if (parsed != NOMOVE)
+		{
+			MakeMove(parsed);
+			PrintBoard();
+		}
+		
 		//Deselecting squares on GUI
 		DeSelectSq(UserMove.from);
 		DeSelectSq(UserMove.to);
@@ -154,6 +154,53 @@ function MakeUserMove ()
 		UserMove.to = SQUARES.NO_SQ;
 	}
 }
+
+//Returns true if there is a piece on the square
+function PieceIsOnSq (sq, top, left)
+{
+	if ((RanksBrd[sq] == 7 - Math.round(top / 60)) && 
+		 FilesBrd[sq] == Math.round(left / 60))
+	{
+		return BOOL.TRUE;
+	}
+	else 
+	{
+		return BOOL.FALSE;
+	}
+}
+
+//Removing a piece from the GUI
+function RemoveGUIPiece (sq)
+{
+	//looping through each piece object
+	$(".Piece").each(function(i) 
+	{
+		//If a square is on a given rank / file
+		if (PieceIsOnSq(sq, $(this).position().top, $(this).position().left) == BOOL.TRUE)
+		{
+			//Add the html class "SqSelected"
+			$(this).remove();
+		}
+	});
+}
+
+//Adds a piece from the GUI
+function AddGUIPiece (sq, pce)
+{
+	let rankName = `rank${RanksBrd[sq] + 1}`;
+	let fileName = `file${FilesBrd[sq] + 1}`;
+	
+	let pieceFileName = "images/" + SideChar[PieceCol[pce]] + PceChar[pce].toUpperCase() + ".png";
+	let imageString = "<image src=\"" + pieceFileName + "\" class=\"Piece " + rankName + " " + fileName + "\"/>";
+	//Adds these divs to the board, a give piece with a type / color
+	$("#Board").append(imageString);
+}
+
+
+
+
+
+
 
 
 

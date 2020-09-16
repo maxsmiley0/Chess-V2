@@ -12,6 +12,7 @@ function NewGame (fenStr)
 	ParseFen(fenStr);
 	PrintBoard();
 	SetInitialBoardPieces();
+	CheckAndSet();
 }
 
 //Clears all piece images from the GUI board
@@ -146,6 +147,8 @@ function MakeUserMove ()
 			PrintBoard();
 			//Updates the pieces images on the external board
 			MoveGUIPiece(parsed);
+			//Checks if game over
+			CheckAndSet();
 		}
 		
 		//Deselecting squares on GUI
@@ -279,10 +282,134 @@ function MoveGUIPiece (move)
 	}
 }
 
+//Returns true if position is drawn due to insufficient material
+function DrawMaterial ()
+{
+	//If any pawns exist, it is not drawn due to material
+	if (GameBoard.pceNum[PIECES.wP] != 0 || GameBoard.pceNum[PIECES.bP] != 0) return BOOL.FALSE;
+	if (GameBoard.pceNum[PIECES.wP] != 0 || GameBoard.pceNum[PIECES.bP] != 0) return BOOL.FALSE;
+	//If one queen or rook is on board, position is not drawn due to material
+	if (GameBoard.pceNum[PIECES.wQ] != 0 || GameBoard.pceNum[PIECES.bQ] != 0 ||
+	    GameBoard.pceNum[PIECES.wR] != 0 || GameBoard.pceNum[PIECES.bR] != 0) return BOOL.FALSE;
+	//Returns false if we have more than 1 minor piece
+	if (GameBoard.pceNum[PIECES.wB] > 1 || GameBoard.pceNum[PIECES.bB] > 1) return BOOL.FALSE;
+	if (GameBoard.pceNum[PIECES.wN] > 1 || GameBoard.pceNum[PIECES.bN] > 1) return BOOL.FALSE;
+	if (GameBoard.pceNum[PIECES.wB] != 0 && GameBoard.pceNum[PIECES.bB] != 0) return BOOL.FALSE;
+	if (GameBoard.pceNum[PIECES.wN] != 0 && GameBoard.pceNum[PIECES.bN] != 0) return BOOL.FALSE;
+	
+	return BOOL.TRUE;
+}
 
+//Checks for draw due to three fold repetition
+function ThreeFoldRep ()
+{
+	let r = 0;
+	
+	//Loops through history
+	for (let i = 0; i < GameBoard.hisply; i++)
+	{
+		//Increments repetition count
+		if (GameBoard.history[i].posKey == GameBoard.posKey)
+		{
+			r++;
+		}
+	}
+	
+	return r;
+}
 
+//Checks to see if the game is over, and if so, is it a draw or mate?
+function CheckResult()
+{
+	//Drawn cases
+	
+	//100 because plies are half moves
+	if (GameBoard.fiftyMove >= 100)
+	{
+		$("#GameStatus").text("Game Drawn (fifty move rule)");
+		return BOOL.TRUE;
+	}
+	//2, because 3-fold means the current position has occurred twice before
+	else if (ThreeFoldRep() >= 2)
+	{
+		$("#GameStatus").text("Game Drawn (three-fold repetition)");
+		return BOOL.TRUE;
+	}
+	//Insufficient material
+	else if (DrawMaterial() == BOOL.TRUE)
+	{
+		$("#GameStatus").text("Game Drawn (insufficient material)");
+		return BOOL.TRUE;
+	}
+	
+	//Checkmate / stalemate cases
+	
+	GenerateMoves();
+	
+	let found = 0;
+	
+	//Loop through legal moves
+	for (let MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; MoveNum++)
+	{
+		if (MakeMove(GameBoard.moveList[MoveNum]) == BOOL.FALSE)
+		{
+			continue;
+		}
 
+		found++;
+		TakeMove();
+		break;
+	}
+	
+	//If there are legal moves, return false, because game is still on
+	if (found != 0)
+	{
+		return BOOL.FALSE;
+	}
+	else 
+	{
+		//Now there is a stalemate or checkmate
+		if (SqAttacked(GameBoard.pList[PCEINDEX(Kings[GameBoard.side], 0)], GameBoard.side^1) == BOOL.TRUE)
+		{
+			//Mate
+			if (GameBoard.side == COLORS.WHITE)
+			{
+				$("#GameStatus").text("Game Over (Black Wins)");
+				return BOOL.TRUE;
+			}
+			else 
+			{
+				$("#GameStatus").text("Game Over (White Wins)");
+				return BOOL.TRUE;
+			}
+		}
+		else 
+		{
+			//Stalemate
+			$("#GameStatus").text("Game Drawn (stalemate)");
+			return BOOL.TRUE;
+		}
+	}
+	
+	//Should theoretically never reach this
+	console.error("Reaching end of CheckResults() in gui.js");
+	return BOOL.FALSE;
+}
 
+//Checks if game is over, and sets #GameStatus
+function CheckAndSet()
+{
+	if (CheckResult() == BOOL.TRUE)
+	{
+		//#GameStatus set in CheckResult if game over
+		GameController.GameOver = BOOL.TRUE;
+	}
+	else 
+	{
+		GameController.GameOver = BOOL.FALSE;
+		$("#GameStatus").text("");
+	}
+}
 
 
 

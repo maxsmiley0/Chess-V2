@@ -6,6 +6,25 @@ $("#SetFen").click(function ()
 	SearchPosition();
 });
 
+//When we click the button with the ID "TakeButton", it executes this
+$("#TakeButton").click(function() 
+{
+	//Takes back a move, if we can
+	if (GameBoard.hisPly >= 2)
+	{
+		TakeMove();
+		TakeMove();
+		GameBoard.ply = 0;
+		SetInitialBoardPieces();
+	}
+});
+
+//When we click the button with the ID "NewGameButton", it executes this
+$("#NewGameButton").click(function() 
+{
+	NewGame(START_FEN);
+});
+
 //Sets a new game up on the GUI given an FEN string
 function NewGame (fenStr)
 {
@@ -305,9 +324,9 @@ function DrawMaterial ()
 function ThreeFoldRep ()
 {
 	let r = 0;
-	
+	console.log(GameBoard.hisPly);
 	//Loops through history
-	for (let i = 0; i < GameBoard.hisply; i++)
+	for (let i = 0; i < GameBoard.hisPly; i++)
 	{
 		//Increments repetition count
 		if (GameBoard.history[i].posKey == GameBoard.posKey)

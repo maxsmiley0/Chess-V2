@@ -377,19 +377,21 @@ function SearchPosition ()
 	let line;
 	let PvNum;		//number of moves in principal variation line
 	let currentDepth;
+	let score;
 	
 	ClearForSearch();
 	
 	//Iterative deepening framework
 	for (currentDepth = 1; currentDepth <= SearchController.depth; currentDepth++)
 	{
-		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
+		score = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 		
 		if (SearchController.stop == BOOL.TRUE)
 		{
 			break;
 		}
 		
+		bestScore = score;
 		bestMove = ProbePvTable();
 		line = `D: ${currentDepth} Best ${PrMove(bestMove)} Score ${bestScore} Nodes ${SearchController.nodes}`;
 		PvNum = GetPvLine(currentDepth);
@@ -423,7 +425,7 @@ function UpdateDOMStats(dom_score, dom_depth)
 	//If a mate is found, display a text instead of "299.99"
 	if (Math.abs(dom_score) > MATE - MAXDEPTH)
 	{
-		scoreText = `Score: Mate In ${MATE - Math.abs(dom_score)} moves`;
+		scoreText = `Score: Mate In ${(MATE - Math.abs(dom_score)) - 1} moves`;
 	}
 	
 	$("#OrderingOut").text(`Ordering: ${((SearchController.fhf/SearchController.fh)*100).toFixed(2)}%`);

@@ -2,8 +2,7 @@ $(function()
 {
 	init();
 	console.log("Main Init Called");
-	ParseFen(START_FEN);
-	PrintBoard();
+	NewGame(START_FEN);
 });
 
 function InitFileRanksBrd()
@@ -131,6 +130,7 @@ function InitBoardSquares ()
 			
 			light ^= 1;
 			divString = "<div class=\"Square " + rankName + " " + fileName + " " + lightString + "\"/>";
+			//Adds all of these divs to the board, a square at a given position and light/dark
 			$("#Board").append(divString);
 		}
 	}

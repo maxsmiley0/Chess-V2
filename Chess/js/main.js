@@ -100,6 +100,42 @@ function InitBoardVars()
 	}
 }
 
+//Initializes color of board squares in the html file
+function InitBoardSquares ()
+{
+	let light = 1;
+	
+	let rankName;
+	let fileName;
+	let divString;
+	let lightString;
+	
+	//Loop through all squares
+	for (let rankItr = RANKS.RANK_8; rankItr >= RANKS.RANK_1; rankItr--)
+	{
+		light ^= 1;	//flipping color of square
+		rankName = `rank${rankItr + 1}`;
+		
+		for (let fileItr = FILES.FILE_A; fileItr <= FILES.FILE_H; fileItr++)
+		{
+			fileName = `file${fileItr + 1}`;
+			
+			if (light == 0)
+			{
+				lightString = "Light";
+			}
+			else 
+			{
+				lightString = "Dark";
+			}
+			
+			light ^= 1;
+			divString = "<div class=\"Square " + rankName + " " + fileName + " " + lightString + "\"/>";
+			$("#Board").append(divString);
+		}
+	}
+}
+
 function init()
 {
 	console.log("init() called");
@@ -108,6 +144,7 @@ function init()
 	InitSq120ToSq64();				//Initializing Sq64ToSq120 and Sq120ToSq64 arrays
 	InitBoardVars();				//Initializing board history array
 	InitMvvLva();					//Initializing MvvLva array
+	InitBoardSquares();
 }
 
 

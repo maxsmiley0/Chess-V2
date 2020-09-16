@@ -141,8 +141,11 @@ function MakeUserMove ()
 		
 		if (parsed != NOMOVE)
 		{
+			//Makes the move on the internal board
 			MakeMove(parsed);
 			PrintBoard();
+			//Updates the pieces images on the external board
+			MoveGUIPiece(parsed);
 		}
 		
 		//Deselecting squares on GUI
@@ -178,7 +181,7 @@ function RemoveGUIPiece (sq)
 		//If a square is on a given rank / file
 		if (PieceIsOnSq(sq, $(this).position().top, $(this).position().left) == BOOL.TRUE)
 		{
-			//Add the html class "SqSelected"
+			//Removes all html classes from this object
 			$(this).remove();
 		}
 	});
@@ -194,6 +197,86 @@ function AddGUIPiece (sq, pce)
 	let imageString = "<image src=\"" + pieceFileName + "\" class=\"Piece " + rankName + " " + fileName + "\"/>";
 	//Adds these divs to the board, a give piece with a type / color
 	$("#Board").append(imageString);
+}
+
+//Makes a move on the GUI
+function MoveGUIPiece (move)
+{
+	//Structured similarly to MovePiece, but as it pertains to the GUI
+	let from = FROMSQ(move);
+	let to = TOSQ(move);
+	
+	//Special cases
+	
+	//En passant
+	if ((move & MFLAGEP) != 0)
+	{
+		let epRemove;
+		if (GameBoard.side == COLORS.BLACK)
+		{
+			epRemove = to - 10;
+		}
+		else
+		{
+			epRemove = to + 10;
+		}
+		RemoveGUIPiece(epRemove);
+	}
+	//Capture case
+	else if (CAPTURED(move))
+	{
+		RemoveGUIPiece(to);
+	}
+	
+	let rankName = `rank${RanksBrd[to] + 1}`;
+	let fileName = `file${FilesBrd[to] + 1}`;
+	
+	//looping through each piece object
+	$(".Piece").each(function(i) 
+	{
+		//If a square is on a given rank / file
+		if (PieceIsOnSq(from, $(this).position().top, $(this).position().left) == BOOL.TRUE)
+		{
+			//Removes classes from html object (captured piece)
+			$(this).removeClass();
+			$(this).addClass(`Piece ${rankName} ${fileName}`);
+		}
+	});
+	
+	//Case castling
+	if ((move & MFLAGCA) != 0)
+	{
+		//This updates the rooks
+		switch (to)
+		{
+			case SQUARES.G1:
+				RemoveGUIPiece(SQUARES.H1);
+				AddGUIPiece(SQUARES.F1, PIECES.wR);
+				break;
+				
+			case SQUARES.C1:
+				RemoveGUIPiece(SQUARES.A1);
+				AddGUIPiece(SQUARES.D1, PIECES.wR);
+				
+				break;
+			case SQUARES.G8:
+				RemoveGUIPiece(SQUARES.H8);
+				AddGUIPiece(SQUARES.F8, PIECES.bR);
+				break;
+				
+			case SQUARES.C8:
+				RemoveGUIPiece(SQUARES.A8);
+				AddGUIPiece(SQUARES.D8, PIECES.bR);
+				break;
+		}
+	}
+	//Promoted case
+	else if (PROMOTED(move))
+	{
+		//Adds the piece to the GUI
+		RemoveGUIPiece(to);
+		AddGUIPiece(to, PROMOTED(move));
+	}
 }
 
 

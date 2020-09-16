@@ -149,6 +149,7 @@ function MakeUserMove ()
 			MoveGUIPiece(parsed);
 			//Checks if game over
 			CheckAndSet();
+			PreSearch();
 		}
 		
 		//Deselecting squares on GUI
@@ -411,8 +412,43 @@ function CheckAndSet()
 	}
 }
 
+//If the game isn't over, then set the search controller thinking
+function PreSearch ()
+{
+	if (GameController.GameOver == BOOL.FALSE)
+	{
+		SearchController.thinking = BOOL.TRUE;
+		//Gives enough time for the piece to be drawn on the board before we start searching
+		setTimeout(function() {StartSearch();}, 200);
+	}
+}
 
+//Immediately makes a move when clicked
+$("#SearchButton").click(function() 
+{
+	GameController.PlayerSide = GameController.PlayerSide ^ 1;
+	PreSearch();
+});
 
+//Searches for a move, allocated a given TIME
+function StartSearch ()
+{
+	SearchController.depth = MAXDEPTH;
+	
+	let t = $.now();
+	let thinkingTime = $("#ThinkTimeChoice").val();
+	
+	//Takes milliseconds, so we have to multiply by 1000
+	SearchController.time = parseInt(thinkingTime) * 1000;
+	SearchPosition();
+	
+	//Makes move on internal board
+	MakeMove(SearchController.best);
+	//Makes move on GUI
+	MoveGUIPiece(SearchController.best);
+	//Checks if game is over
+	CheckAndSet();
+}
 
 
 

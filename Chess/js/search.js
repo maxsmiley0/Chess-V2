@@ -78,7 +78,7 @@ function CheckUp()
 {
 	if (($.now() - SearchController.start) > SearchController.time)
 	{	
-		SearchController.stop == BOOL.TRUE;
+		SearchController.stop = BOOL.TRUE;
 	}
 }
 
@@ -376,11 +376,12 @@ function SearchPosition ()
 	let bestScore = -INFINITE;
 	let line;
 	let PvNum;		//number of moves in principal variation line
+	let currentDepth;
 	
 	ClearForSearch();
 	
 	//Iterative deepening framework
-	for (let currentDepth = 1; currentDepth <= /*SearchController.depth*/ 5; currentDepth++)
+	for (currentDepth = 1; currentDepth <= SearchController.depth; currentDepth++)
 	{
 		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 		
@@ -410,7 +411,63 @@ function SearchPosition ()
 	
 	SearchController.best = bestMove;
 	SearchController.thinking = BOOL.FALSE;
+	UpdateDOMStats(bestScore, currentDepth);
 }
+
+//Updates the drop down menu statistics
+function UpdateDOMStats(dom_score, dom_depth)
+{
+	//Tracks score, in pawns
+	let scoreText = `Score: ${(dom_score / 100).toFixed(2)}`;
+	
+	//If a mate is found, display a text instead of "299.99"
+	if (Math.abs(dom_score) > MATE - MAXDEPTH)
+	{
+		scoreText = `Score: Mate In ${MATE - Math.abs(dom_score)} moves`;
+	}
+	
+	$("#OrderingOut").text(`Ordering: ${((SearchController.fhf/SearchController.fh)*100).toFixed(2)}%`);
+	$("#DepthOut").text(`Depth: ${dom_depth - 1}`);
+	$("#ScoreOut").text(scoreText);
+	$("#NodesOut").text(`Nodes: ${SearchController.nodes}`);
+	$("#TimeOut").text(`Time: ${(($.now() - SearchController.start) / 1000).toFixed(1)}s`);
+	$("BestOut").text(`Best Move: ${PrMove(SearchController.bestMove)}`);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -46,3 +46,52 @@ function SetInitialBoardPieces ()
 		}
 	}
 }
+
+//Simply prints the arguments, will be called during click events
+function ClickedSquare (pageX, pageY)
+{
+	console.log(`Clicked square at ${pageX}, ${pageY}`);
+}
+
+//Executes upon clicking a div of class type .Piece
+$(document).on("click", ".Piece", function (e)
+{
+	console.log("Piece click");
+	ClickedSquare(e.pageX, e.pageY);
+});
+
+//Executes upon clicking a div of class type .Square
+$(document).on("click", ".Square", function (e)
+{
+	console.log("Square click");
+	ClickedSquare(e.pageX, e.pageY);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

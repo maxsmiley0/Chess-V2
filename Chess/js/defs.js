@@ -294,9 +294,20 @@ function HASH_CA() {GameBoard.posKey ^= CastleKeys[GameBoard.castlePerm]; }
 function HASH_SIDE() {GameBoard.posKey ^= SideKey; }
 function HASH_EP() {GameBoard.posKey ^= PieceKeys[GameBoard.enPas]; }
 
+//Controls GUI for who gets to move
+var GameController = 
+{
+	EngineSide: COLORS.BOTH,
+	PlayerSide: COLORS.BOTH,
+	GameOver: BOOL.FALSE
+};
 
-
-
+//When clicking, stores which square has been clicked
+var UserMove = 
+{
+	from: SQUARES.NO_SQ,
+	to: SQUARES.NO_SQ
+};
 
 
 

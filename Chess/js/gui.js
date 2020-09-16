@@ -47,27 +47,113 @@ function SetInitialBoardPieces ()
 	}
 }
 
+//Handles square color changing to "deselected" on click event
+function DeSelectSq (sq)
+{
+	//looping through each square object
+	$(".Square").each(function(i)
+	{
+		//If a square is on a given file and rank
+		if ((RanksBrd[sq] == 7 - Math.round($(this).position().top / 60)) && 
+			 FilesBrd[sq] == Math.round($(this).position().left / 60))
+		{
+			//Remove the html class "SqSelected"
+			$(this).removeClass("SqSelected");
+		}
+	});
+}
+
+//Handles square color changing to "selected" on click event
+function SetSqSelected (sq)
+{
+	//looping through each square object
+	$(".Square").each(function(i) 
+	{
+		//If square is on a given file and rank
+		if ((RanksBrd[sq] == 7 - Math.round($(this).position().top / 60)) && 
+			FilesBrd[sq] == Math.round($(this).position().left / 60))
+		{
+			//Add the html class "SqSelected"
+			$(this).addClass("SqSelected");
+		}
+	});
+}
+
 //Simply prints the arguments, will be called during click events
 function ClickedSquare (pageX, pageY)
 {
 	console.log(`Clicked square at ${pageX}, ${pageY}`);
+	
+	let position = $("#Board").position();	//top lefthand corner of board
+	let workedX = Math.floor(position.left);	//x coordinate of top lefthand corner of board
+	let workedY = Math.floor(position.top);		//y coordinate of top lefthand corner of board
+	
+	Math.floor(pageX);
+	Math.floor(pageY);
+	
+	//Rank is flipped, since "y" coords start at top, but first rank is at bottom
+	let file = Math.floor((pageX - workedX) / 60);
+	let rank = 7 - Math.floor((pageY - workedY) / 60);
+	
+	let sq = FR2SQ(file, rank);
+	
+	console.log(`Clicked sq: ${PrSq(sq)}`);
+	
+	SetSqSelected(sq);
+	
+	return sq;
 }
 
 //Executes upon clicking a div of class type .Piece
 $(document).on("click", ".Piece", function (e)
 {
 	console.log("Piece click");
-	ClickedSquare(e.pageX, e.pageY);
+	
+	//If "from" user move not already set, then set it to this square
+	if (UserMove.from == SQUARES.NO_SQ)
+	{
+		UserMove.from = ClickedSquare(e.pageX, e.pageY);
+	}
+	//If "from" user move is already set to some piece, then set the "to" square to this square
+	else 
+	{
+		UserMove.to = ClickedSquare(e.pageX, e.pageY);
+	}
+	
+	MakeUserMove();
 });
 
 //Executes upon clicking a div of class type .Square
 $(document).on("click", ".Square", function (e)
 {
 	console.log("Square click");
-	ClickedSquare(e.pageX, e.pageY);
+	
+	//Clicking on empty squares to make moves only makes sense if we already have a "from" square
+	if (UserMove.from != SQUARES.NO_SQ)
+	{
+		//set the "to" user move to this square
+		UserMove.to = ClickedSquare(e.pageX, e.pageY);
+		MakeUserMove();
+	}
 });
 
-
+//User making a move through the GUI
+function MakeUserMove ()
+{
+	//Both to and from squares must be defined
+	if (UserMove.from != SQUARES.NO_SQ && UserMove.to != SQUARES.NO_SQ)
+	{
+		console.log(`User Move: ${PrSq(UserMove.from)} ${PrSq(UserMove.to)}`);
+		
+		//Deselecting squares on GUI
+		DeSelectSq(UserMove.from);
+		DeSelectSq(UserMove.to);
+		
+		//Clearing the UserMoves, because we made a move
+		UserMove.from = SQUARES.NO_SQ;
+		UserMove.to = SQUARES.NO_SQ;
+	}
+}
 
 
 

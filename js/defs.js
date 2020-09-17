@@ -263,9 +263,6 @@ function FROMSQ(m) { return (m & 0x7F); }
 function TOSQ(m) { return ((m >> 7) & 0x7F); }
 function CAPTURED(m) { return ((m >> 14) & 0xF); }
 function PROMOTED(m) { return ((m >> 20) & 0xF); }
-function PROMOTED(m) { return ((m >> 20) & 0xF); }
-function PROMOTED(m) { return ((m >> 20) & 0xF); }
-function PROMOTED(m) { return ((m >> 20) & 0xF); }
 
 //Defining "flags", which are constants for the locations to check in the move number
 

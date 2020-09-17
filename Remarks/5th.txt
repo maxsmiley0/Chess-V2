@@ -1,1 +1,46 @@
 Day 5: September 15/16, 2020 49 - 63
+
+This section was dedicated to finishing up the killer and history heuristics (which were described in the previous writeup), along with creating the GUI for the application. Since the GUI is not really inherent to the engine, I'm going to recap the whole project.
+
+1. Board representation
+Array with 120 elements (12 x 10) as opposed to 64 (8 x 8) to handle off board events
+Arrays that map the 120 squares onto the 64 squares for iteration purposes
+Defining pieces, side, as distinct numbers instead of classes
+
+2. Position key
+Generating Zobrist keys for each piece and square at initialization
+Hashing each piece into the position key - the beauty of the XOR operator is that it is its own inverse, so we can hash in / out information
+Hashing in the side key (also generated at initialization, we only need 1 because whether it is "in or our" will represent the side)
+Hashing in the castle perms
+Hashing in the en passant square
+
+3. Move key
+Hash in the "to" square
+Hash in the "from" square
+Hash in the captured piece
+Hash in the promoted piece
+Hash in if it is an en passant move
+Hash in if it is a starting move
+Hash in if it is a castling move
+--> define flags that detect this, and handle special events in MakeMove, like moving the rook when we castle
+
+4. MoveGen
+In GameBoard object, define arrays that store moves keys and move scores
+Calculate all pseudo legal moves given a position key, we will check if it is actually legal in make move
+
+5. MakeMove
+Make the move, if it results in the king square being in check, take the move back and return false
+Otherwise return true
+Remember to hash in / out move information in MakeMove AND TakeMove, e.g. if we capture a piece, we need to hash out the capturing piece initial position key, hash out the captured piece position key, and hash in the capturing piece final position key, hash side, etc.
+If any flags exist, handle these events
+
+6. Evaluation
+PST
+Material
+
+7. Search
+Iterative deepening
+Basic alpha beta with a negamax framework
+Quiescence search at leaf nodes with standing pat
+Move Ordering: Principal variation, MVV LVA, killer heuristic, history heuristic
+Mate checking, draw checking

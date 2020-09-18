@@ -10,7 +10,7 @@ var GameBoard =
 	material: new Array(2),			//Indexed by side, holds value of material
 	pceNum: new Array(13),			//Indexed by piece, how many of a given piece exists?
 	posKey: 0,						//Maps a board to a key (integer, unique)
-	history: [],						//History array, unfixed size
+	history: [],					//History array, unfixed size
 	
 	/*
 	moveList stores all of the moves in the search tree, in order
@@ -403,6 +403,101 @@ function ParseFen (fen)
 	UpdateListsMaterial();
 }
 
+//Returns the FEN of the current board
+function GetFen ()
+{
+	let fen = "";
+	let empty;		//Stores number of empty squares
+	
+	//Iterate through all squares
+	for (let rank = RANKS.RANK_8; rank >= RANKS.RANK_1; rank--)
+	{
+		empty = 0;
+		for (let file = FILES.FILE_A; file <= FILES.FILE_H; file++)
+		{
+			//Gets piece at a particular square
+			let pce = GameBoard.pieces[FR2SQ(file, rank)];
+			//If not an empty square
+			if (pce != PIECES.EMPTY)
+			{
+				//If there are empty squares, fill them in and reset counter
+				if (empty != 0)
+				{
+					fen += empty.toString();
+					empty = 0;
+				}
+				//Add piece to fen
+				fen += PceChar[pce];
+			}
+			else
+			{
+				//If an empty square, add one to the empty counter
+				empty++;
+			}
+		}
+		//If we have reached the end of a rank, and there are some empty spots left
+		if (empty != 0)
+		{
+			//Add empty spots and reset
+			fen += empty.toString();
+			empty = 0;
+		}
+		//Enclose ranks with slash
+		if (rank != RANKS.RANK_1)
+		{
+			fen += '/';
+		}
+		
+	}
+	
+	//Side to move
+	fen += ` ${SideChar[GameBoard.side]} `;
+	
+	//Castling perms
+	let castleExists = BOOL.FALSE;
+	
+	if ((GameBoard.castlePerm & CASTLEBIT.WKCA) != 0)
+	{
+		fen += 'K';
+		castleExists = BOOL.TRUE;
+	}
+	if ((GameBoard.castlePerm & CASTLEBIT.WQCA) != 0)
+	{
+		fen += 'Q';
+		castleExists = BOOL.TRUE;
+	}
+	if ((GameBoard.castlePerm & CASTLEBIT.BKCA) != 0)
+	{
+		fen += 'k';
+		castleExists = BOOL.TRUE;
+	}
+	if ((GameBoard.castlePerm & CASTLEBIT.BQCA) != 0)
+	{
+		fen += 'q';
+		castleExists = BOOL.TRUE;
+	}
+	if (castleExists == BOOL.FALSE)
+	{
+		fen += '-';
+	}
+	
+	//En passant
+	fen += ' ';
+	
+	if (GameBoard.enPas != SQUARES.NO_SQ)
+	{
+		fen += FileChar[FilesBrd[GameBoard.enPas]];
+		fen += RankChar[RanksBrd[GameBoard.enPas] - 1];
+	}
+	else 
+	{
+		fen += "-";
+	}
+	
+	return fen;
+}
+
+//To debug
 function PrintSqAttacked ()
 {
 	console.log ("\nAttacked\n");

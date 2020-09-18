@@ -381,6 +381,19 @@ function SearchPosition ()
 	
 	ClearForSearch();
 	
+	let opening = false;
+	for (let i = 0; i < Book.position.length; i++)
+	{
+		if (GetFen() == Book.position[i])
+		{
+			opening = true;
+			console.log(Book.bestMove[i])
+			SearchController.best = Book.bestMove[i];
+			break;
+		}
+	}
+	if (!opening)
+	{
 	//Iterative deepening framework
 	for (currentDepth = 1; currentDepth <= SearchController.depth; currentDepth++)
 	{
@@ -414,6 +427,7 @@ function SearchPosition ()
 	SearchController.best = bestMove;
 	SearchController.thinking = BOOL.FALSE;
 	UpdateDOMStats(bestScore, currentDepth);
+	}
 }
 
 //Updates the drop down menu statistics

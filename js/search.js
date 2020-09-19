@@ -193,7 +193,7 @@ What is the general layout for move ordering?
 4. Quiet moves ordered by values from the history heuristic
 */
 
-function AlphaBeta (alpha, beta, depth)
+function AlphaBeta (alpha, beta, depth, DoNull)
 {	
 	//Leaf node case - return static eval	
 	if (depth <= 0)
@@ -232,6 +232,22 @@ function AlphaBeta (alpha, beta, depth)
 	
 	let Score = -INFINITE;
 	
+	////////NULLMOVE
+	//implement zugzwang check later, R = 3
+	
+	if (DoNull && (InCheck == BOOL.FALSE) && (GameBoard.ply > 0) && (depth >= 4))
+	{
+		MakeNullMove();
+		Score = -AlphaBeta(-beta, -beta + 1, depth - 4, BOOL.FALSE);
+		TakeNullMove();
+		
+		//what is stopped?
+		if (Score >= beta)
+		{
+			return beta;
+		}
+	}
+		
 	GenerateMoves();
 	
 	let Legal = 0;				//How many legal moves have we made?
@@ -241,6 +257,9 @@ function AlphaBeta (alpha, beta, depth)
 	
 	//Order PV Move (set high move ordering score)
 	let PvMove = ProbePvTable();
+	
+	Score = -INFINITE;  //Define again in case of failure to prune via null move method
+	
 	if (PvMove != NOMOVE)
 	{
 		for (let MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; MoveNum++)
@@ -266,7 +285,7 @@ function AlphaBeta (alpha, beta, depth)
 		}
 		
 		Legal++;
-		Score = -AlphaBeta(-beta, -alpha, depth - 1);
+		Score = -AlphaBeta(-beta, -alpha, depth - 1, DoNull);
 		TakeMove();
 		
 		if (SearchController.stop == BOOL.TRUE)
@@ -397,7 +416,7 @@ function SearchPosition ()
 	//Iterative deepening framework
 	for (currentDepth = 1; currentDepth <= SearchController.depth; currentDepth++)
 	{
-		score = AlphaBeta(-INFINITE, INFINITE, currentDepth);
+		score = AlphaBeta(-INFINITE, INFINITE, currentDepth, BOOL.TRUE);
 		
 		if (SearchController.stop == BOOL.TRUE)
 		{

@@ -306,6 +306,9 @@ var UserMove =
 	to: SQUARES.NO_SQ
 };
 
+//Transposition table enties
+const TTABLEENTRIES = 100000;
+
 
 
 

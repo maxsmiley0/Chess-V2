@@ -195,6 +195,14 @@ What is the general layout for move ordering?
 
 function AlphaBeta (alpha, beta, depth, DoNull)
 {	
+	//If position has already been searched at a depth greater or equal to this one
+	/*
+	if (TranspositionTable.position[GameBoard.posKey % TTABLEENTRIES] == GameBoard.posKey && 
+		TranspositionTable.depth[GameBoard.posKey % TTABLEENTRIES] >= depth)
+	{
+		return TranspositionTable.score[GameBoard.posKey % TTABLEENTRIES];
+	}
+	*/
 	//Leaf node case - return static eval	
 	if (depth <= 0)
 	{
@@ -234,7 +242,7 @@ function AlphaBeta (alpha, beta, depth, DoNull)
 	
 	////////NULLMOVE
 	//implement zugzwang check later, R = 3
-	
+	/*
 	if (DoNull && (InCheck == BOOL.FALSE) && (GameBoard.ply > 0) && (depth >= 4))
 	{
 		MakeNullMove();
@@ -247,7 +255,7 @@ function AlphaBeta (alpha, beta, depth, DoNull)
 			return beta;
 		}
 	}
-		
+		*/
 	GenerateMoves();
 	
 	let Legal = 0;				//How many legal moves have we made?
@@ -351,6 +359,11 @@ function AlphaBeta (alpha, beta, depth, DoNull)
 		StorePvMove(BestMove);
 	}
 	
+	/*
+	TranspositionTable.position[GameBoard.posKey % TTABLEENTRIES] = GameBoard.posKey;
+	TranspositionTable.score[GameBoard.posKey % TTABLEENTRIES] = alpha;
+	TranspositionTable.depth[GameBoard.posKey % TTABLEENTRIES] = depth;
+	*/
 	return alpha;
 }
 
@@ -376,6 +389,7 @@ function ClearForSearch ()
 	}
 	
 	ClearPvTable();
+	ClearTranspositionTable();
 	GameBoard.ply = 0;
 	
 	//Resetting members of the SearchController object literal

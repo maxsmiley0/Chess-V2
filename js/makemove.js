@@ -313,5 +313,90 @@ function TakeMove ()
 	}
 }
 
+//Does not make a move, simply changes side and updates history
+//Essentially make move but we don't make an actual move on the Game Board
+function MakeNullMove ()
+{
+	GameBoard.history[GameBoard.hisPly].posKey = GameBoard.posKey;
+	
+	//If there was an en passant square, we need to reset it (hash it out), because this
+	//square is reset every turn
+	if (GameBoard.enPas != SQUARES.NO_SQ)
+	{
+		HASH_EP();
+	}
+	
+	//Updating the history table
+	GameBoard.history[GameBoard.hisPly].move = NOMOVE;
+	GameBoard.history[GameBoard.hisPly].fiftyMove = GameBoard.fiftyMove;
+	GameBoard.history[GameBoard.hisPly].enPas = GameBoard.enPas;
+	GameBoard.history[GameBoard.hisPly].castlePerm = GameBoard.castlePerm;
+	
+	//Updating the Game Board members
+	GameBoard.enPas = SQUARES.NO_SQ;
+	GameBoard.side ^= 1;
+	GameBoard.hisPly++;
+	GameBoard.ply++;
+	
+	//Hashing the side into the position key
+	HASH_SIDE();
+}
+
+//Takes back a null move
+//Essentially take move but we don't take back an actual move on the Game Board
+function TakeNullMove ()
+{
+	//Updating Game Board members
+	GameBoard.hisPly--;
+	GameBoard.ply--;
+	
+	//If there was an en passant square, we need to reset it (hash it out), because this
+	//square is reset every turn
+	if (GameBoard.enPas != SQUARES.NO_SQ)
+	{
+		HASH_EP();
+	}
+	
+	//Updating Game Board members
+	GameBoard.castlePerm = GameBoard.history[GameBoard.hisPly].castlePerm;
+	GameBoard.fiftyMove = GameBoard.history[GameBoard.hisPly].fiftyMove;
+	GameBoard.enPas = GameBoard.history[GameBoard.hisPly].enPas;
+	
+	if (GameBoard.enPas != SQUARES.NO_SQ)
+	{
+		HASH_EP();
+	}
+	
+	//Hash the side out of the GameBoard position key
+	GameBoard.side ^= 1;
+	HASH_SIDE();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -243,7 +243,7 @@ function AlphaBeta (alpha, beta, depth, DoNull)
 	////////NULLMOVE
 	//implement zugzwang check later, R = 3
 	/*
-	if (DoNull && (InCheck == BOOL.FALSE) && (GameBoard.ply > 0) && (depth >= 4))
+	if (DoNull && (InCheck == BOOL.FALSE) && (GameBoard.ply != 0) && (depth >= 4))
 	{
 		MakeNullMove();
 		Score = -AlphaBeta(-beta, -beta + 1, depth - 4, BOOL.FALSE);

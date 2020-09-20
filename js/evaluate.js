@@ -138,6 +138,6 @@ function EvalPosition ()
 	{
 		score -= BishopPair;
 	}
-	
+	console.log(GameBoard.moveListStart[GameBoard.ply + 1] - GameBoard.moveListStart[GameBoard.ply]);
 	return (GameBoard.side == COLORS.WHITE ? score: -score);
 }

@@ -255,7 +255,7 @@ function AlphaBeta (alpha, beta, depth, DoNull)
 			return beta;
 		}
 	}
-		*/
+	*/
 	GenerateMoves();
 	
 	let Legal = 0;				//How many legal moves have we made?
